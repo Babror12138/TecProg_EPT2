@@ -25,7 +25,7 @@ Ponto CreatPoint(float Px, float Py){
 *@post Em sucesso, retorna uma estrutura Segmento, que representa um segmento de reta formado por dois pontos lidos na entrada
 *@return Estrutura Segmento SR
 */
-Segmento CreatSegment(float Px, float Py, float Pnx, float Pny){
+/*Segmento CreatSegment(float Px, float Py, float Pnx, float Pny){
 	Segmento SR;
 	SR.x = Px;
 	SR.y = Py;
@@ -33,7 +33,7 @@ Segmento CreatSegment(float Px, float Py, float Pnx, float Pny){
 	SR.ny = Pny;
 	
 	return SR;
-}
+}*/
 
 /**
 *@brief Criação de um segmento de reta, a partir das coordenadas dos dois pontos geradores
@@ -42,7 +42,7 @@ Segmento CreatSegment(float Px, float Py, float Pnx, float Pny){
 *@post Em sucesso, retorna uma estrutura Segmento, que representa um segmento de reta formado por dois pontos lidos na entrada
 *@return Estrutura Segmento SR
 */
-/*
+
 Segmento CreatSegment(Ponto point1, Ponto point2){
 	Segmento SR;
 	SR.p1 = point1;
@@ -50,4 +50,3 @@ Segmento CreatSegment(Ponto point1, Ponto point2){
 	
 	return SR;
 }
-*/+
