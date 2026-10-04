@@ -23,12 +23,21 @@ typedef struct {
 Poligono create_polygon(int n, Ponto *vertices);
 
 /**
+ * @brief Liberação da memória usada pelos vértices de um polígono
+ * @param poligono Ponteiro para o polígono a ser liberado
+ * @pre poligono != NULL
+ * @post poligono->vertices == NULL
+ * @post poligono->n == 0
+ */
+void free_polygon(Poligono *poligono);
+
+/**
  * @brief Calcula a área do polígono
  * @param poligono Ponteiro para o polígono 
  * @return Área do polígono
  * @pre poligono != NULL
  */
-double polygon_area(Poligono* poligono);
+double polygon_area(const Poligono *poligono);
 
 /**
  * @brief Calcula o perímetro do polígono
@@ -36,7 +45,7 @@ double polygon_area(Poligono* poligono);
  * @return Perímetro do polígono
  * @pre poligono != NULL
  */
-double polygon_perimeter(Poligono* poligono);
+double polygon_perimeter(const Poligono *poligono);
 
 /**
  * @brief Calcula o centroide do polígono
@@ -44,7 +53,7 @@ double polygon_perimeter(Poligono* poligono);
  * @return Ponto correspondente ao centroide do polígono
  * @pre poligono != NULL
  */
-Ponto polygon_centroid(Poligono* poligono);
+Ponto polygon_centroid(const Poligono *poligono);
 
 /**
  * @brief Verifica se um polígono é convexo
@@ -53,7 +62,7 @@ Ponto polygon_centroid(Poligono* poligono);
  * 	   false caso contrário
  * @pre poligono != NULL
  */
-bool is_convex(Poligono* poligono);
+bool is_convex(const Poligono *poligono);
 
 /**
  * @brief Verifica se um polígono contém um ponto
@@ -64,6 +73,6 @@ bool is_convex(Poligono* poligono);
  * @pre poligono != NULL
  * @pre ponto != NULL
  */
-bool polygon_contains_point(Poligono* poligono, Ponto* ponto);
+bool polygon_contains_point(const Poligono *poligono, const Ponto *ponto);
 
 #endif
