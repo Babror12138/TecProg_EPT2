@@ -1,7 +1,15 @@
 #include "polygon.h"
+//#include "geometry2d.h"
+#include <math.h>
 #include <stdlib.h>
 
-Poligono create_polygon(int n, Ponto *vertices) {
+//placeholder
+double PointDistance(Ponto p1, Ponto p2){
+	double dist = (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y);
+	return sqrt(dist);
+}
+
+Poligono create_polygon(int n, const Ponto *vertices) {
 	Poligono poligono;
 	
 	if (n < 3 || vertices == NULL) {
@@ -25,12 +33,13 @@ Poligono create_polygon(int n, Ponto *vertices) {
 }
 
 void free_polygon(Poligono *poligono) {
+	if (poligono == null) return;
 	free(poligono->vertices);
 	poligono->vertices = NULL;
 	poligono->n = 0;
 }
 
-double polygon_area(Poligono *poligono) {
+double signed_area(const Poligono *poligono) {
 	int n = poligono->n;
 	Ponto *vertices = poligono->vertices;
 
@@ -46,33 +55,50 @@ double polygon_area(Poligono *poligono) {
 	return area;
 }
 
-double polygon_perimeter(Poligono *poligono) {
-
+double polygon_area(const Poligono *poligono) {
+	return fabs(signed_area(poligono));
 }
 
-Ponto polygon_centroid(Poligono *poligono) {
+double polygon_perimeter(const Poligono *poligono) {
+	int n = poligono->n;
+	Ponto *vertices = poligono->vertices;
+
+	double perimeter = 0;
+
+	for (int i = 0; i < n - 1; i++) {
+		perimeter += PointDistance(vertices[i], vertices[i+1]);
+	}
+	perimeter += PointDistance(vertices[n-1], vertices[0]);
+
+	return perimeter;
+}
+
+Ponto polygon_centroid(const Poligono *poligono) {
 	int n = poligono->n;
 	Ponto *vertices = poligono->vertices;
 
 	Ponto centroid;
-	centroid.x = 0;
-	centroid.y = 0;
+	double Cx = 0;
+	double Cy = 0;
+	double A = signed_area(poligono);
 
-	for (int i = 0; i < n; i++) {
-		centroid.x += vertices[i].x;
-		centroid.y += vertices[i].x;
+	for (int i = 0; i < n - 1; i++) {
+		Cx += (vertices[i].x + vertices[i+1].x) * (vertices[i].x * vertices[i+1].y - vertices[i+1].x * vertices[i].y);
+		Cy += (vertices[i].y + vertices[i+1].y) * (vertices[i].x * vertices[i+1].y - vertices[i+1].x * vertices[i].y);
 	}
+	Cx += (vertices[n-1].x + vertices[0].x) * (vertices[n-1].x * vertices[0].y - vertices[0].x * vertices[n-1].y);
+	Cy += (vertices[n-1].y + vertices[0].y) * (vertices[n-1].x * vertices[0].y - vertices[0].x * vertices[n-1].y);
 
-	centroid.x = centroid.x / 2;
-	centroid.y = centroid.y / 2;
+	centroid.x = Cx / (6 * A);
+	centroid.y = Cy / (6 * A);
 
 	return centroid;
 }
 
-bool is_convex(Poligono *poligono) {
+int is_convex(const Poligono *poligono) {
 
 }
 
-bool polygon_contains_point(Poligono *poligono, Ponto *ponto) {
+int polygon_contains_point(const Poligono *poligono, const Ponto *ponto) {
 
 }

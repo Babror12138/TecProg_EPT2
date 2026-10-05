@@ -21,7 +21,7 @@ typedef struct {
  * @pre vertices aponta para um vetor contendo n elementos do tipo Ponto.
  * @pre Os vértice consecutivos do vetor devem ser adjacentes no polígono.
  */
-Poligono create_polygon(int n, Ponto *vertices);
+Poligono create_polygon(int n, const Ponto *vertices);
 
 /**
  * @brief Liberação da memória usada pelos vértices de um polígono.
@@ -33,7 +33,15 @@ Poligono create_polygon(int n, Ponto *vertices);
 void free_polygon(Poligono *poligono);
 
 /**
- * @brief Calcula a área do polígono.
+ * @brief Calcula a área do polígono com sinal.
+ * @param poligono Ponteiro para o polígono.
+ * @return Área do polígono com sinal positivo, se os vértices estiverem ordenados em sentido anti-horário, e negativo caso contrário.
+ * @pre poligono != NULL.
+ */
+double signed_area(const Poligono *poligono);
+
+/**
+ * @brief Calcula a área do polígono, em módulo.
  * @param poligono Ponteiro para o polígono.
  * @return Área do polígono.
  * @pre poligono != NULL.
@@ -59,21 +67,19 @@ Ponto polygon_centroid(const Poligono *poligono);
 /**
  * @brief Verifica se um polígono é convexo.
  * @param poligono Ponteiro para o polígono a ser verificado.
- * @return true se o polígono for convexo;
- * 	   false caso contrário.
+ * @return 1 se o polígono for convexo; 0 caso contrário.
  * @pre poligono != NULL.
  */
-bool is_convex(const Poligono *poligono);
+int is_convex(const Poligono *poligono);
 
 /**
  * @brief Verifica se um polígono contém um ponto.
  * @param poligono Ponteiro para o polígono a ser verificado.
  * @param ponto Ponteiro para o ponto a ser verificado.
- * @return true se o ponto estiver dentro do polígono ou sobre os lados;
- * 	   false se o ponto estiver fora do polígono.
+ * @return 1 se o ponto estiver dentro do polígono ou sobre os lados; 0 se o ponto estiver fora do polígono.
  * @pre poligono != NULL.
  * @pre ponto != NULL.
  */
-bool polygon_contains_point(const Poligono *poligono, const Ponto *ponto);
+int polygon_contains_point(const Poligono *poligono, const Ponto *ponto);
 
 #endif
