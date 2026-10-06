@@ -9,8 +9,8 @@ typedef struct{
 
 //Estutura Segmento, que recebe dois pontos geradores de um segmento de reta
 typedef struct{
-	Ponto *p1;
-	Ponto *p2;
+	Ponto p1;
+	Ponto p2;
 } Segmento;
 
 /**
@@ -29,6 +29,6 @@ Ponto CreatPoint(float x, float y);
 *@post Em sucesso, retorna uma estrutura Segmento, que representa um segmento de reta formado por dois pontos lidos na entrada
 *@return Estrutura Segmento SR
 */
-Segmento CreatSegment(Ponto *point1, Ponto *point2);
+Segmento CreatSegment(Ponto point1, Ponto point2);
 
 #endif

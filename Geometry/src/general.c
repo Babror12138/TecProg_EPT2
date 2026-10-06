@@ -11,7 +11,7 @@ Ponto CreatPoint(float Px, float Py){
 }
 
 
-Segmento CreatSegment(Ponto *point1, Ponto *point2){
+Segmento CreatSegment(Ponto point1, Ponto point2){
 	Segmento SR;
 	SR.p1 = point1;
 	SR.p2 = point2;
