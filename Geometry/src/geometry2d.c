@@ -4,80 +4,52 @@
 #include "geometry2d.h"
 #define EPS = 1e-7f
 
-/**
-*@brief Identificar se um ponto p está sobre o segmento de reta SR
-*@param SR o segmento de reta que se deseja analisar, do tipo Segmento, criado no módulo general
-*@param p o ponto que se deseja analisar, do tipo Ponto, criado no módulo general
-*@pre Os dois pontos que forma o segmento de reta SR não podem ser iguais
-*@return Inteiro 1 caso o ponto está sobre o segmento de reta, e 0 caso contrário
-*/
-int PointOnSegment(Segmento SR, Ponto p){
+int PointOnSegment(Segmento *SR, Ponto *p){
 	//Identificar se o ponto p está dentro do escopo definido pelos dois pontos do segmento
-	if(!(p.x <= SR.p1.x && p.x >= SR.p2.x) && !(p.x >= SR.p1.x && p.x <= SR.p2.x)) return 0;
-	if(!((p.y <= SR.p1.y) && (p.y >= SR.p2.y)) && !((p.y >= SR.p1.y) && (p.y <= SR.p2.y))) return 0;
+	if(!(p->x <= SR->p1.x && p->x >= SR->p2.x) && !(p->x >= SR->p1.x && p.x <= SR->p2.x)) return 0;
+	if(!((p->y <= SR->p1.y) && (p->y >= SR->p2.y)) && !((p->y >= SR->p1.y) && (p->y <= SR->p2.y))) return 0;
 	
 	//Os dois elementos do vetor formado pelos dois pontos do segmento
-	double x = SR.p1.x - SR.p2.x;
-	double y = SR.p1.y - SR.p2.y;
+	double x = SR->p1.x - SR->p2.x;
+	double y = SR->p1.y - SR->p2.y;
 	
 	//Identificar se o ponto está sobre a reta definida pelo vetor anterior e um ponto do segmento da reta
 	//Simples identificação já basta, pois já sabemos que o ponto está dentro do escopo dos pontos do segmento
-	double u = p.x - SR.p1.x;
-	double v = p.y - SR.p1.y;
+	double u = p.x - SR->p1.x;
+	double v = p.y - SR->p1.y;
 	
-	if( (x*v - y*u) > EPS) return 0;
+	if(fabs(x*v - y*u) > EPS) return 0;
 	
 	return 1;
 }
-
-/**
-*@brief Calcular a distância entre dois pontos
-*@param p1 o primeiro ponto, do tipo Ponto, criado no módulo general
-*@param p2 o segundo ponto, do tipo Ponto, criado no módulo general
-*@return Valor, em double, da distância entre os pontos p1 e p2
-*/
-double PointDistance(Ponto p1, Ponto p2){
++
+double PointDistance(Ponto *p1, Ponto *p2){
 	//Aplicação da fórmula da distância entre pontos
-	double dist = (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y);
+	double dist = (p1->x - p2->x)*(p1->x - p2->x) + (p1->y - p2->y)*(p1->y - p2->y);
 	return sqrt(dist);
 }
 
-/**
-*@brief Calcular a distância entre uma reta, definida a partir de um segmento de reta, e um ponto
-*@param SR o segmento de reta que serve de base para a construção da reta que passa sobre ele, do tipo Segmento, criado no módulo geral
-*@param p o ponto que se deseja analisar, do tipo Ponto, criado no módulo general
-*@pre Os dois pontos que definem o segmento de reta não podem ser iguais
-*@return Valor, em double, da distância entre a reta definida pelo SR e ponto p1
-*/
-double PointLineDistance(Segmento SR, Ponto p){
+double PointLineDistance(Segmento *SR, Ponto *p){
 	//Definição dos coeficientes da equação da reta definda pelo segmento de reta SR
-	double a = SR.p2.y - SR.p1.y;
-	double b = -1*(SR.p2.x - SR.p1.x);
-	double c = SR.p1.y * (SR.p2.x - SR.p1.x) - SR.p1.x * (SR.p2.y - SR.p1.y);
+	double a = SR->p2.y - SR->p1.y;
+	double b = -1*(SR->p2.x - SR->p1.x);
+	double c = SR->p1.y * (SR->p2.x - SR->p1.x) - SR->p1.x * (SR->p2.y - SR->p1.y);
 	
 	//Aplicação da fórmula da distância e ponto
-	double sup = a * p.x + b * p.y + c;
+	double sup = a * p->x + b * p->y + c;
 	if(sup < 0) sup = -sup;
 	
 	return sup / sqrt((a*a) + (b*b));
 }
 
-/**
-*@brief Encontrar o ponto de intersecção entre duas retas definidas por dois segmentos de reta
-*@param SR1 o segmento de reta que define a primeira reta, do tipo Segmento, criado no módulo geral
-*@param SR2 o segmento de reta que define a segunda reta, do tipo Segmento, criado no módulo geral
-*@pre Os respectivos dois pontos que definem cada segmento de reta não devem ser iguais
-*@pre Os dois segmentos de reta não podem ser paralelas, a saída da função LinesPosition com SR1 e SR2 não pode ser 0
-*@return p o ponto, do tipo Ponto, criado no módulo geral, que representa o ponto de intersecção entre as duas retas
-*/
-Ponto LineIntersection(Segmento SR1, Segmento SR2){
-	double a1 = SR1.p2.y - SR1.p1.y;
-	double b1 = -(SR1.p2.x - SR1.p1.x);
-	double c1 = SR1.p1.y * (SR1.p2.x - SR1.p1.x) - SR1.p1.x * (SR1.p2.y - SR1.p1.y);
+Ponto LineIntersection(Segmento *SR1, Segmento *SR2){
+	double a1 = SR1->p2.y - SR1->p1.y;
+	double b1 = -(SR1->p2.x - SR1->p1.x);
+	double c1 = SR1->p1.y * (SR1->p2.x - SR1->p1.x) - SR1->p1.x * (SR1->p2.y - SR1->p1.y);
 
-	double a2 = SR2.p2.y - SR2.p1.y;
-	double b2 = -(SR2.p2.x - SR2.p1.x);
-	double c2 = -SR2.p1.y * (SR2.p2.x - SR2.p1.x) + SR2.p1.x * (SR2.p2.y - SR2.p1.y);
+	double a2 = SR2->p2.y - SR2->p1.y;
+	double b2 = -(SR2->p2.x - SR2->p1.x);
+	double c2 = -SR2->p1.y * (SR2->p2.x - SR2->p1.x) + SR2->p1.x * (SR2->p2.y - SR2->p1.y);
 	
 	det = a1*b2 - a2*b1;
 	
@@ -89,24 +61,18 @@ Ponto LineIntersection(Segmento SR1, Segmento SR2){
 	return p;
 }
 
-/**
-*@brief Identificar a posição relativa das duas retas, definidas a partir de segmentos de reta SR1 e SR2
-*@param SR1 o segmento de reta que serve de base para construção da reta que passa por ele, do tipo Segmento, criado no módulo geral
-*@param SR2 o segmento de reta que serve de base para construção da reta que passa por ele, do tipo Segmento, criado no módulo geral
-*@pre Os dois pontos que forma os segmentos de reta SR1 e SR2 não podem ser iguais
-*@return Inteiro 0 caso são paralelos, 1 caso são perpendiculares e 2 caso são concorrentes
-*/
-int LinesPosition(Segmento SR1, Segmento SR2){
+
+int LinesPosition(Segmento *SR1, Segmento *SR2){
 	//Define o vetor que define a reta formada pelo segmento de reta SR1
-	double x1 = SR1.p1.x - SR1.p2.x;
-	double y1 = SR1.p1.y - SR1.p2.y;
+	double x1 = SR1->p1.x - SR1->p2.x;
+	double y1 = SR1->p1.y - SR1->p2.y;
 	
 	//Define o vetor que define a reta formada pelo segmento da reta SR2
-	double x2 = SR2.p1.x - SR2.p2.x;
-	double y2 = SR2.p1.y - SR2.p2.y;
+	double x2 = SR2->p1.x - SR2->p2.x;
+	double y2 = SR2->p1.y - SR2->p2.y;
 	
 	//Comparação entre os vetores
-	if((x1*y2 - x2*y1) < EPS) return 0;
-	if((x1*x2) + (y1*y2) < EPS) return 1;
+	if(fabs(x1*y2 - x2*y1) < EPS) return 0;
+	if(fabs(x1*x2) + (y1*y2) < EPS) return 1;
 	else return 2;
 }
