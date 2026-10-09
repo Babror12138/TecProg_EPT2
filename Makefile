@@ -3,7 +3,7 @@
 # Configuração
 LIB_NAME	:= geom
 
-CC		 	:= gcc
+CC			:= gcc
 CFLAGS		:= -std=c11 -Wall -Wextra -pedantic -O2 -Iinclude
 DEPFLAGS	:= -MMD -MP
 LDLIBS		:= -lm
@@ -72,12 +72,12 @@ $(BUILD_DIR)/app/%.o: $(APP_DIR)/%.c
 # Link estático do programa do cliente
 $(APP_STATIC): $(APP_OBJS) $(STATIC_LIB)
 	@mkdir -p $(@D)
-	$(CC) $(APP_OBJS) $(STATIC_LIBS) $(LDLIBS) -o $@
+	$(CC) $(APP_OBJS) $(STATIC_LIB) $(LDLIBS) -o $@
 
 # Link dinâmico do programa do cliente
+# aqui eu uso -Wl,-rpath para não precisar mexer em LD_LIBRARY_PATH na hora de rodar o programa
 $(APP_SHARED): $(APP_OBJS) $(SHARED_LIB)
 	@mkdir -p $(@D)
-	# aqui eu uso -Wl,-rpath para não precisar mexer em LD_LIBRARY_PATH na hora de rodar o programa
 	$(CC) $(APP_OBJS) -L$(LIB_DIR) -l$(LIB_NAME) -Wl,-rpath,'$$ORIGIN/../$(LIB_DIR)' $(LDLIBS) -o $@
 
 run: run-static run-shared
@@ -95,7 +95,7 @@ run-shared: $(APP_SHARED)
 # Regra para compilar os objetos dos testes
 $(BUILD_DIR)/tests/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(@D)
-	$(CC) $(CPPFLAGS) -I$(TEST_DIR) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
+	$(CC) -I$(TEST_DIR) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 # Regra para linkar o executável dos testes
 $(BIN_DIR)/tests/%: $(BUILD_DIR)/tests/%.o $(STATIC_LIB)
