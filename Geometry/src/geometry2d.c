@@ -2,12 +2,16 @@
 #include <math.h>
 #include "general.h"
 #include "geometry2d.h"
+
 #define EPS = 1e-6
 
 int PointOnSegment(Segmento *SR, Ponto *p){
 	//Identificar se o ponto p está dentro do escopo definido pelos dois pontos do segmento
-	if(!(p->x <= SR->p1.x && p->x >= SR->p2.x) && !(p->x >= SR->p1.x && p.x <= SR->p2.x)) return 0;
-	if(!((p->y <= SR->p1.y) && (p->y >= SR->p2.y)) && !((p->y >= SR->p1.y) && (p->y <= SR->p2.y))) return 0;
+	double minx = fmin(SR->p1.x, SR->p2.x), maxx = fmax(SR->p1.x, SR->p2.x);
+	double miny = fmin(SR->p1.y, SR->p2.y), maxy = fmax(SR->p1.y, SR->p2.y);
+	
+	if(p->x < minx - EPS || p->x > maxx + EPS) return 0;
+	if(p->y < miny - EPS || p->y > maxy + EPS) return 0;
 	
 	//Os dois elementos do vetor formado pelos dois pontos do segmento
 	double x = SR->p1.x - SR->p2.x;
@@ -15,14 +19,14 @@ int PointOnSegment(Segmento *SR, Ponto *p){
 	
 	//Identificar se o ponto está sobre a reta definida pelo vetor anterior e um ponto do segmento da reta
 	//Simples identificação já basta, pois já sabemos que o ponto está dentro do escopo dos pontos do segmento
-	double u = p.x - SR->p1.x;
-	double v = p.y - SR->p1.y;
+	double u = p->x - SR->p1.x;
+	double v = p->y - SR->p1.y;
 	
 	if(fabs(x*v - y*u) > EPS) return 0;
 	
 	return 1;
 }
-+
+
 double PointDistance(Ponto *p1, Ponto *p2){
 	//Aplicação da fórmula da distância entre pontos
 	double dist = (p1->x - p2->x)*(p1->x - p2->x) + (p1->y - p2->y)*(p1->y - p2->y);
@@ -45,7 +49,7 @@ double PointLineDistance(Segmento *SR, Ponto *p){
 Ponto LineIntersection(Segmento *SR1, Segmento *SR2){
 	double a1 = SR1->p2.y - SR1->p1.y;
 	double b1 = -(SR1->p2.x - SR1->p1.x);
-	double c1 = SR1->p1.y * (SR1->p2.x - SR1->p1.x) - SR1->p1.x * (SR1->p2.y - SR1->p1.y);
+	double c1 = -SR1->p1.y * (SR1->p2.x - SR1->p1.x) + SR1->p1.x * (SR1->p2.y - SR1->p1.y);
 
 	double a2 = SR2->p2.y - SR2->p1.y;
 	double b2 = -(SR2->p2.x - SR2->p1.x);
@@ -73,6 +77,6 @@ int LinesPosition(Segmento *SR1, Segmento *SR2){
 	
 	//Comparação entre os vetores
 	if(fabs(x1*y2 - x2*y1) < EPS) return 0;
-	if(fabs(x1*x2) + (y1*y2) < EPS) return 1;
+	if(fabs(x1*x2 + y1*y2) < EPS) return 1;
 	else return 2;
 }

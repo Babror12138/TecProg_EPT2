@@ -1,3 +1,5 @@
+#include "general.h"
+
 #ifndef __GEOMETRY2D_H__
 #define __GEOMETRY2D_H__
 
