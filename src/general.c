@@ -2,14 +2,13 @@
 #include "general.h"
 
 
-Ponto CreatPoint(float Px, float Py){
+Ponto CreatPoint(double Px, double Py){
 	Ponto p;
 	p.x = Px;
 	p.y = Py;
 
 	return p;
 }
-
 
 Segmento CreatSegment(Ponto point1, Ponto point2){
 	Segmento SR;
@@ -18,4 +17,3 @@ Segmento CreatSegment(Ponto point1, Ponto point2){
 	
 	return SR;
 }
-

@@ -1,13 +1,13 @@
 #ifndef __GENERAL_H__
 #define __GENERAL_H__
 
-//Cria estrutura ponto, com as coordenadas em (x, y) em um plano cartesiano
+//Cria estrutura ponto, com as coordenadas em (x, y)
 typedef struct{
-	float x;
-	float y;
+	double x;
+	double y;
 } Ponto;
 
-//Estutura Segmento, que recebe dois pontos geradores de um segmento de reta
+//Cria estrutura segmento de reta, a partir de dois pontos
 typedef struct{
 	Ponto p1;
 	Ponto p2;
@@ -20,7 +20,7 @@ typedef struct{
 *@post Em sucesso, retorna uma estrutura Ponto com as coordeadas x e y
 *@return Estrutura Ponto p
 */
-Ponto CreatPoint(float x, float y);
+Ponto CreatPoint(double x, double y);
 
 /**
 *@brief Criação de um segmento de reta, a partir das coordenadas dos dois pontos geradores
@@ -29,6 +29,6 @@ Ponto CreatPoint(float x, float y);
 *@post Em sucesso, retorna uma estrutura Segmento, que representa um segmento de reta formado por dois pontos lidos na entrada
 *@return Estrutura Segmento SR
 */
-Segmento CreatSegment(Ponto point1, Ponto point2);
+Segmento CreatSegment(Ponto p1, Ponto p2);
 
 #endif
