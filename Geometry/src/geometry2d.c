@@ -2,7 +2,7 @@
 #include <math.h>
 #include "general.h"
 #include "geometry2d.h"
-#define EPS = 1e-7f
+#define EPS = 1e-6
 
 int PointOnSegment(Segmento *SR, Ponto *p){
 	//Identificar se o ponto p está dentro do escopo definido pelos dois pontos do segmento
