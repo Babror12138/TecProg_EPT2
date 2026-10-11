@@ -1,6 +1,7 @@
 #ifndef SPATIAL
 #define SPATIAL
 
+#include <stdbool.h>
 #include "general.h"
 #include "polygon.h"
 
@@ -19,8 +20,22 @@ Ponto* closestPair(Ponto* pontos, int n);
  * @param count ponteiro para se obter o tamanho da lista de interseções
  * @return A lista contendo os pontos de interseção
  */
-Ponto* intersectionPolygon(Poligono A, Poligono B, int *count);
+Ponto* intersectionPolygon(Poligono A, Poligono B, int *length);
 
-Poligono* intersectionRegion(Poligono A, Poligono B);
+/**
+ * @brief Encontra as regiões de interseção entre dois polígonos
+ * @param A Poligono A
+ * @param B Poligono B
+ * @return A lista contendo as regiões de interseção
+ */
+Poligono* intersectionRegion(Poligono A, Poligono B, int *length);
+
+/**
+ * @brief Verifica se o poligono A está totalmente contido em B
+ * @param A Poligono A
+ * @param B Poligono B
+ * @return true se A está contido em B, caso contrário false é retornado
+ */
+bool isPolygonInside(Poligono A, Poligono B);
 
 #endif
