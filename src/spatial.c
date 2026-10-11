@@ -2,6 +2,9 @@
 #include "geometry2d.h"
 #include <math.h>
 #include <stdlib.h>
+#include <stdbool.h>
+
+#define EPS 1e-5f
 
 Ponto* closestPair(Ponto* pontos, int n) {
   if (pontos == NULL || n < 2) {
@@ -58,11 +61,28 @@ Ponto* intersectionPolygon(Poligono A, Poligono B, int *count) {
 
       Ponto intersectionPoint = LineIntersection(&segA, &segB);
 
-      // verifica se o ponto está nas retas
+      // verifica se o ponto está nas arestas
       if (
         !PointOnSegment(&segA, &intersectionPoint) ||
         !PointOnSegment(&segB, &intersectionPoint)
       ) continue;
+
+      // remove pontos de interseção duplicados
+      bool duplicated = false;
+
+      for (int l = 0; l < k; l++) {
+        if (
+          fabs(intersects[l].x - intersectionPoint.x) <= EPS &&
+          fabs(intersects[l].y - intersectionPoint.y) <= EPS
+        ) {
+          duplicated = true;
+          break;
+        }
+      }
+
+      if (!duplicated) {
+        intersects[k++] = intersectionPoint;
+      }
 
       // alocação de mais memória
       if (k == n) {
