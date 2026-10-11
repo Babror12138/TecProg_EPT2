@@ -12,6 +12,15 @@
  */
 Ponto* closestPair(Ponto* pontos, int n);
 
-Ponto* intersectionRegion(Poligono A, Poligono B);
+/**
+ * @brief Encontra os pontos de interseção entre dois polígonos
+ * @param A Poligono A
+ * @param B Poligono B
+ * @param count ponteiro para se obter o tamanho da lista de interseções
+ * @return A lista contendo os pontos de interseção
+ */
+Ponto* intersectionPolygon(Poligono A, Poligono B, int *count);
+
+Poligono* intersectionRegion(Poligono A, Poligono B);
 
 #endif
