@@ -3,7 +3,7 @@
 #include "general.h"
 #include "geometry2d.h"
 
-#define EPS = 1e-6
+#define EPS 1e-5f
 
 int PointOnSegment(Segmento *SR, Ponto *p){
 	//Identificar se o ponto p está dentro do escopo definido pelos dois pontos do segmento
@@ -55,7 +55,7 @@ Ponto LineIntersection(Segmento *SR1, Segmento *SR2){
 	double b2 = -(SR2->p2.x - SR2->p1.x);
 	double c2 = -SR2->p1.y * (SR2->p2.x - SR2->p1.x) + SR2->p1.x * (SR2->p2.y - SR2->p1.y);
 	
-	det = a1*b2 - a2*b1;
+	double det = a1*b2 - a2*b1;
 	
 	Ponto p;
 	
