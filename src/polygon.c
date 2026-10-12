@@ -3,11 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-//placeholder
-double PointDistance(Ponto p1, Ponto p2){
-	double dist = (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y);
-	return sqrt(dist);
-}
+#define EPS 1e-6
 
 Poligono create_polygon(int n, const Ponto *vertices) {
 	Poligono poligono;
@@ -40,6 +36,10 @@ void free_polygon(Poligono *poligono) {
 }
 
 double signed_area(const Poligono *poligono) {
+	if (poligono == NULL || poligono->vertices == NULL || poligono->n < 3) {
+		return 0.0;
+	}
+
 	int n = poligono->n;
 	Ponto *vertices = poligono->vertices;
 
@@ -60,27 +60,43 @@ double polygon_area(const Poligono *poligono) {
 }
 
 double polygon_perimeter(const Poligono *poligono) {
+	if (poligono == NULL || poligono->vertices == NULL || poligono->n < 3) {
+		return 0.0;
+	}
+
 	int n = poligono->n;
 	Ponto *vertices = poligono->vertices;
 
 	double perimeter = 0;
 
 	for (int i = 0; i < n - 1; i++) {
-		perimeter += PointDistance(vertices[i], vertices[i+1]);
+		perimeter += PointDistance(&vertices[i], &vertices[i+1]);
 	}
-	perimeter += PointDistance(vertices[n-1], vertices[0]);
+	perimeter += PointDistance(&vertices[n-1], &vertices[0]);
 
 	return perimeter;
 }
 
 Ponto polygon_centroid(const Poligono *poligono) {
+	Ponto centroid;
+	centroid.x = 0;
+	centroid.y = 0;
+
+	if (poligono == NULL || poligono->vertices == NULL || poligono->n < 3) {
+		return centroid;
+	}
+
+	
 	int n = poligono->n;
 	Ponto *vertices = poligono->vertices;
 
-	Ponto centroid;
 	double Cx = 0;
 	double Cy = 0;
 	double A = signed_area(poligono);
+
+	if (fabs(A) < EPS) {
+		return centroid;
+	}
 
 	for (int i = 0; i < n - 1; i++) {
 		Cx += (vertices[i].x + vertices[i+1].x) * (vertices[i].x * vertices[i+1].y - vertices[i+1].x * vertices[i].y);
@@ -96,6 +112,10 @@ Ponto polygon_centroid(const Poligono *poligono) {
 }
 
 int is_convex(const Poligono *poligono) {
+	if (poligono == NULL || poligono->vertices == NULL || poligono->n < 3) {
+		return 0;
+	}
+
 	int n = poligono->n;
 	Ponto *vertices = poligono->vertices;
 
@@ -124,7 +144,11 @@ int is_convex(const Poligono *poligono) {
 	return 1;
 }
 
-int polygon_contains_point(const Poligono *poligono, const Ponto *ponto) {
+int polygon_contains_point(const Poligono *poligono, Ponto *ponto) {
+	if (poligono == NULL || poligono->vertices == NULL || poligono->n < 3) {
+		return 0;
+	}
+
 	int n = poligono->n;
 	Ponto *vertices = poligono->vertices;
 
@@ -136,14 +160,14 @@ int polygon_contains_point(const Poligono *poligono, const Ponto *ponto) {
 
 		Segmento s = CreatSegment(p1, p2);
 
-		if (PointOnSegment(&s, ponto) {
+		if (PointOnSegment(&s, ponto)) {
 			return 1;
 		}
 
-		if ((p1.y > ponto->y) != (p2.y > pont->y)) {
+		if ((p1.y > ponto->y) != (p2.y > ponto->y)) {
 			double x_inter = p1.x + (ponto->y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y);
 
-			if (ponto-> < x_inter) {
+			if (ponto->x < x_inter) {
 				inter++;
 			}
 		}
