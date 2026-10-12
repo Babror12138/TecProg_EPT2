@@ -1,5 +1,5 @@
 #include "polygon.h"
-//#include "geometry2d.h"
+#include "geometry2d.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -33,7 +33,7 @@ Poligono create_polygon(int n, const Ponto *vertices) {
 }
 
 void free_polygon(Poligono *poligono) {
-	if (poligono == null) return;
+	if (poligono == NULL) return;
 	free(poligono->vertices);
 	poligono->vertices = NULL;
 	poligono->n = 0;
@@ -96,9 +96,58 @@ Ponto polygon_centroid(const Poligono *poligono) {
 }
 
 int is_convex(const Poligono *poligono) {
+	int n = poligono->n;
+	Ponto *vertices = poligono->vertices;
 
+	int orientation = 0;
+
+	for (int i = 0; i < n; i++) {
+		Ponto p1 = vertices[i];
+		Ponto p2 = vertices[(i+1) % n];
+		Ponto p3 = vertices[(i+2) % n];
+
+		double cross = (p2.x - p1.x) * (p3.y - p2.y) - (p2.y - p1.y) * (p3.x - p2.x);
+
+		if (orientation == 0) {
+			if (cross > 0) {
+				orientation = 1;
+			} else {
+				orientation = -1;
+			}
+		} else if (orientation == 1 && cross < 0) {
+			return 0;
+		} else if (orientation == -1 && cross > 0) {
+			return 0;
+		}
+	}
+
+	return 1;
 }
 
 int polygon_contains_point(const Poligono *poligono, const Ponto *ponto) {
+	int n = poligono->n;
+	Ponto *vertices = poligono->vertices;
 
+	int inter = 0;
+	
+	for (int i = 0; i < n; i++) {
+		Ponto p1 = vertices[i];
+		Ponto p2 = vertices[(i+1) % n];
+
+		Segmento s = CreatSegment(p1, p2);
+
+		if (PointOnSegment(&s, ponto) {
+			return 1;
+		}
+
+		if ((p1.y > ponto->y) != (p2.y > pont->y)) {
+			double x_inter = p1.x + (ponto->y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y);
+
+			if (ponto-> < x_inter) {
+				inter++;
+			}
+		}
+	}
+
+	return (inter % 2 == 1);
 }
