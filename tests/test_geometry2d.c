@@ -1,7 +1,7 @@
 #include "test_utils.h"
 #include "geometry2d.h"
 
-static void testPointOnSegment(void) {
+static void test_point_on_segment(void) {
     Ponto a = create_point(0, 0), b = create_point(4, 0), meio = create_point(2, 0);
     Segmento s = create_segment(a, b);
 
@@ -24,7 +24,7 @@ static void testPointOnSegment(void) {
     ASSERT_TRUE(point_on_segment(&s, &fora) == 0);
 }
 
-static void testPointDistance(void) {
+static void test_point_distance(void) {
     Ponto origem = create_point(0, 0), p = create_point(3, 4);
 
     // triângulo retângulo 3-4-5
@@ -41,7 +41,7 @@ static void testPointDistance(void) {
     ASSERT_NEAR(point_distance(&negativo, &p), 10.0, EPS);
 }
 
-static void testPointLineDistance(void) {
+static void test_point_line_distance(void) {
     Ponto a = create_point(0, 0), b = create_point(4, 0);
     Segmento s = create_segment(a, b);
 
@@ -69,7 +69,7 @@ static void testPointLineDistance(void) {
     ASSERT_NEAR(point_line_distance(&s, &p), sqrt(2.0), EPS);
 }
 
-static void testLineIntersection(void) {
+static void test_line_intersection(void) {
     // testa reta horizontal com reta vertical
     Segmento horizontal = create_segment(create_point(0, 0), create_point(4, 0));
     Segmento vertical = create_segment(create_point(2, -1), create_point(2, 5));
@@ -90,7 +90,7 @@ static void testLineIntersection(void) {
     ASSERT_NEAR(p.y, 2.0, EPS);
 }
 
-static void testLinesPosition(void) {
+static void test_lines_position(void) {
     Segmento base = create_segment(create_point(0, 0), create_point(4, 0));
 
     // testa retas paralelas
@@ -111,10 +111,10 @@ static void testLinesPosition(void) {
 }
 
 int main(void) {
-    testPointOnSegment();
-    testPointDistance();
-    testPointLineDistance();
-    testLineIntersection();
-    testLinesPosition();
+    test_point_on_segment();
+    test_point_distance();
+    test_point_line_distance();
+    test_line_intersection();
+    test_lines_position();
     return testReport("geometry2d");
 }

@@ -16,7 +16,7 @@ static const Ponto CONCAVO[] = { {0, 0}, {4, 0}, {2, 1}, {4, 4}, {0, 4} };
 // mesmo quadrado, mas com um vértice dentro de uma aresta
 static const Ponto QUADRADO_COLINEAR[] = { {0, 0}, {2, 0}, {4, 0}, {4, 4}, {0, 4} };
 
-static void testCreatePolygon(void) {
+static void test_create_polygon(void) {
     // testa criação de polígono válido
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
     ASSERT_TRUE(p.n == 4);
@@ -41,7 +41,7 @@ static void testCreatePolygon(void) {
     ASSERT_TRUE(p.n == 0 && p.vertices == NULL);
 }
 
-static void testFreePolygon(void) {
+static void test_free_polygon(void) {
     // testa se o polígono fica vazio depois de liberado
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
     free_polygon(&p);
@@ -54,7 +54,7 @@ static void testFreePolygon(void) {
     ASSERT_TRUE(p.n == 0 && p.vertices == NULL);
 }
 
-static void testSignedArea(void) {
+static void test_signed_area(void) {
     // sentido anti-horário dá área positiva
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
     ASSERT_NEAR(signed_area(&p), 16.0, EPS);
@@ -69,7 +69,7 @@ static void testSignedArea(void) {
     ASSERT_NEAR(signed_area(NULL), 0.0, EPS);
 }
 
-static void testPolygonArea(void) {
+static void test_polygon_area(void) {
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
     ASSERT_NEAR(polygon_area(&p), 16.0, EPS);
     free_polygon(&p);
@@ -89,7 +89,7 @@ static void testPolygonArea(void) {
     ASSERT_NEAR(polygon_area(&p), 0.0, EPS);
 }
 
-static void testPolygonPerimeter(void) {
+static void test_polygon_perimeter(void) {
     // testa perímetro do quadrado
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
     ASSERT_NEAR(polygon_perimeter(&p), 16.0, EPS);
@@ -104,7 +104,7 @@ static void testPolygonPerimeter(void) {
     ASSERT_NEAR(polygon_perimeter(NULL), 0.0, EPS);
 }
 
-static void testPolygonCentroid(void) {
+static void test_polygon_centroid(void) {
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
     Ponto c = polygon_centroid(&p);
     ASSERT_NEAR(c.x, 2.0, EPS);
@@ -131,7 +131,7 @@ static void testPolygonCentroid(void) {
     ASSERT_NEAR(c.y, 0.0, EPS);
 }
 
-static void testIsConvex(void) {
+static void test_is_convex(void) {
     // testa polígonos convexos nos dois sentidos
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
     ASSERT_TRUE(is_convex(&p) == 1);
@@ -159,7 +159,7 @@ static void testIsConvex(void) {
     ASSERT_TRUE(is_convex(NULL) == 0);
 }
 
-static void testPolygonContainsPoint(void) {
+static void test_polygon_contains_point(void) {
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
 
     // testa ponto dentro do polígono
@@ -189,13 +189,13 @@ static void testPolygonContainsPoint(void) {
 }
 
 int main(void) {
-    testCreatePolygon();
-    testFreePolygon();
-    testSignedArea();
-    testPolygonArea();
-    testPolygonPerimeter();
-    testPolygonCentroid();
-    testIsConvex();
-    testPolygonContainsPoint();
+    test_create_polygon();
+    test_free_polygon();
+    test_signed_area();
+    test_polygon_area();
+    test_polygon_perimeter();
+    test_polygon_centroid();
+    test_is_convex();
+    test_polygon_contains_point();
     return testReport("polygon");
 }

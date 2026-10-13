@@ -19,7 +19,7 @@ static const Ponto COLINEARES[] = { {0, 0}, {1, 1}, {2, 2}, {3, 3} };
 typedef Poligono (*FuncaoFecho)(int, const Ponto *);
 
 // retorna 1 se o polígono tem os mesmos pontos esperados na mesma ordem
-static int fechoIgual(const Poligono *fecho, const Ponto *esperado, int n) {
+static int fecho_igual(const Poligono *fecho, const Ponto *esperado, int n) {
     if (fecho->n != n) return 0;
 
     for (int i = 0; i < n; i++) {
@@ -32,25 +32,25 @@ static int fechoIgual(const Poligono *fecho, const Ponto *esperado, int n) {
 
 // os testes a seguir são válidos tanto para Graham quanto Jarvis
 
-static void testFechoQuadrado(FuncaoFecho fecho) {
+static void test_fecho_quadrado(FuncaoFecho fecho) {
     Poligono h = fecho(TAM(QUADRADO), QUADRADO);
-    ASSERT_TRUE(fechoIgual(&h, FECHO_QUADRADO, TAM(FECHO_QUADRADO)));
+    ASSERT_TRUE(fecho_igual(&h, FECHO_QUADRADO, TAM(FECHO_QUADRADO)));
     free_polygon(&h);
 }
 
-static void testFechoTriangulo(FuncaoFecho fecho) {
+static void test_fecho_triangulo(FuncaoFecho fecho) {
     Poligono h = fecho(TAM(TRIANGULO), TRIANGULO);
-    ASSERT_TRUE(fechoIgual(&h, TRIANGULO, TAM(TRIANGULO)));
+    ASSERT_TRUE(fecho_igual(&h, TRIANGULO, TAM(TRIANGULO)));
     free_polygon(&h);
 }
 
-static void testFechoIgnoraColinearesERepetidos(FuncaoFecho fecho) {
+static void test_fecho_ignora_colineares_e_repetidos(FuncaoFecho fecho) {
     Poligono h = fecho(TAM(QUADRADO_SUJO), QUADRADO_SUJO);
-    ASSERT_TRUE(fechoIgual(&h, FECHO_QUADRADO, TAM(FECHO_QUADRADO)));
+    ASSERT_TRUE(fecho_igual(&h, FECHO_QUADRADO, TAM(FECHO_QUADRADO)));
     free_polygon(&h);
 }
 
-static void testFechoEntradaInvalida(FuncaoFecho fecho) {
+static void test_fecho_entrada_invalida(FuncaoFecho fecho) {
     // pontos é nulo
     Poligono h = fecho(5, NULL);
     ASSERT_TRUE(h.n == 0 && h.vertices == NULL);
@@ -67,16 +67,16 @@ static void testFechoEntradaInvalida(FuncaoFecho fecho) {
     free_polygon(&h);
 }
 
-static void testGrahamIgualJarvis(void) {
+static void test_graham_igual_jarvis(void) {
     Poligono graham = convex_hull_graham(TAM(QUADRADO_SUJO), QUADRADO_SUJO);
     Poligono jarvis = convex_hull_jarvis(TAM(QUADRADO_SUJO), QUADRADO_SUJO);
     ASSERT_TRUE(graham.n >= 3);
-    ASSERT_TRUE(fechoIgual(&graham, jarvis.vertices, jarvis.n));
+    ASSERT_TRUE(fecho_igual(&graham, jarvis.vertices, jarvis.n));
     free_polygon(&graham);
     free_polygon(&jarvis);
 }
 
-static void testArea(void) {
+static void test_area(void) {
     ASSERT_NEAR(convex_hull_area(TAM(QUADRADO), QUADRADO), 16.0, EPS);
     ASSERT_NEAR(convex_hull_area(TAM(TRIANGULO), TRIANGULO), 6.0, EPS);
 
@@ -85,7 +85,7 @@ static void testArea(void) {
     ASSERT_NEAR(convex_hull_area(TAM(COLINEARES), COLINEARES), 0.0, EPS);
 }
 
-static void testPerimetro(void) {
+static void test_perimetro(void) {
     ASSERT_NEAR(convex_hull_perimeter(TAM(QUADRADO), QUADRADO), 16.0, EPS);
     ASSERT_NEAR(convex_hull_perimeter(TAM(TRIANGULO), TRIANGULO), 12.0, EPS);
 
@@ -94,7 +94,7 @@ static void testPerimetro(void) {
     ASSERT_NEAR(convex_hull_perimeter(TAM(COLINEARES), COLINEARES), 0.0, EPS);
 }
 
-static void testDiametro(void) {
+static void test_diametro(void) {
     // testa se o diâmetro é o que deveria ser
     ASSERT_NEAR(convex_hull_diameter(TAM(QUADRADO), QUADRADO), 4.0 * sqrt(2.0), EPS);
     ASSERT_NEAR(convex_hull_diameter(TAM(TRIANGULO), TRIANGULO), 5.0, EPS);
@@ -107,19 +107,19 @@ static void testDiametro(void) {
 }
 
 int main(void) {
-    testFechoQuadrado(convex_hull_graham);
-    testFechoQuadrado(convex_hull_jarvis);
-    testFechoTriangulo(convex_hull_graham);
-    testFechoTriangulo(convex_hull_jarvis);
-    testFechoIgnoraColinearesERepetidos(convex_hull_graham);
-    testFechoIgnoraColinearesERepetidos(convex_hull_jarvis);
-    testFechoEntradaInvalida(convex_hull_graham);
-    testFechoEntradaInvalida(convex_hull_jarvis);
-    testGrahamIgualJarvis();
+    test_fecho_quadrado(convex_hull_graham);
+    test_fecho_quadrado(convex_hull_jarvis);
+    test_fecho_triangulo(convex_hull_graham);
+    test_fecho_triangulo(convex_hull_jarvis);
+    test_fecho_ignora_colineares_e_repetidos(convex_hull_graham);
+    test_fecho_ignora_colineares_e_repetidos(convex_hull_jarvis);
+    test_fecho_entrada_invalida(convex_hull_graham);
+    test_fecho_entrada_invalida(convex_hull_jarvis);
+    test_graham_igual_jarvis();
 
-    testArea();
-    testPerimetro();
-    testDiametro();
+    test_area();
+    test_perimetro();
+    test_diametro();
 
     return testReport("convex_hull");
 }

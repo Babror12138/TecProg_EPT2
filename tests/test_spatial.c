@@ -24,7 +24,7 @@ static int contemPonto(const Ponto *pontos, int n, double x, double y) {
     return 0;
 }
 
-static void testClosestPair(void) {
+static void test_closest_pair(void) {
     // testa conjunto com um único par mais próximo
     Ponto pontos[] = { {0, 0}, {5, 5}, {1, 0}, {9, 9} };
     Ponto *par = closest_pair(pontos, TAM(pontos));
@@ -53,7 +53,7 @@ static void testClosestPair(void) {
     ASSERT_TRUE(closest_pair(NULL, 4) == NULL);
 }
 
-static void testIntersectionPolygon(void) {
+static void test_intersection_polygon(void) {
     Poligono a = create_polygon(TAM(QUADRADO_A), QUADRADO_A);
     Poligono b = create_polygon(TAM(QUADRADO_B), QUADRADO_B);
     Poligono dentro = create_polygon(TAM(QUADRADO_DENTRO), QUADRADO_DENTRO);
@@ -84,7 +84,7 @@ static void testIntersectionPolygon(void) {
     free_polygon(&longe);
 }
 
-static void testIsPolygonInside(void) {
+static void test_is_polygon_inside(void) {
     Poligono a = create_polygon(TAM(QUADRADO_A), QUADRADO_A);
     Poligono b = create_polygon(TAM(QUADRADO_B), QUADRADO_B);
     Poligono dentro = create_polygon(TAM(QUADRADO_DENTRO), QUADRADO_DENTRO);
@@ -109,7 +109,7 @@ static void testIsPolygonInside(void) {
     free_polygon(&longe);
 }
 
-static void testIntersectionRegion(void) {
+static void test_intersection_region(void) {
     Poligono a = create_polygon(TAM(QUADRADO_A), QUADRADO_A);
     Poligono b = create_polygon(TAM(QUADRADO_B), QUADRADO_B);
     Poligono dentro = create_polygon(TAM(QUADRADO_DENTRO), QUADRADO_DENTRO);
@@ -153,9 +153,9 @@ static void testIntersectionRegion(void) {
 }
 
 int main(void) {
-    testClosestPair();
-    testIntersectionPolygon();
-    testIsPolygonInside();
-    testIntersectionRegion();
+    test_closest_pair();
+    test_intersection_polygon();
+    test_is_polygon_inside();
+    test_intersection_region();
     return testReport("spatial");
 }

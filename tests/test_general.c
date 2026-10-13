@@ -1,7 +1,7 @@
 #include "test_utils.h"
 #include "general.h"
 
-static void testCreatPoint(void) {
+static void test_creat_point(void) {
     // teste com ponto qualquer
     Ponto p = create_point(1.5f, -2.0f);
     ASSERT_NEAR(p.x, 1.5, EPS);
@@ -13,7 +13,7 @@ static void testCreatPoint(void) {
     ASSERT_NEAR(origem.y, 0.0, EPS);
 }
 
-static void testCreatSegment(void) {
+static void test_creat_segment(void) {
     // teste com segmento qualquer
     Ponto a = create_point(0.0f, 0.0f);
 	Ponto b = create_point(3.0f, 4.0f);
@@ -30,7 +30,7 @@ static void testCreatSegment(void) {
 }
 
 int main(void) {
-    testCreatPoint();
-    testCreatSegment();
+    test_creat_point();
+    test_creat_segment();
     return testReport("general");
 }
