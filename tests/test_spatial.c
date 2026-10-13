@@ -28,14 +28,14 @@ static int contemPonto(const Ponto *pontos, int n, double x, double y) {
 static void testClosestPair(void) {
     // testa conjunto com um único par mais próximo
     Ponto pontos[] = { {0, 0}, {5, 5}, {1, 0}, {9, 9} };
-    Ponto *par = closestPair(pontos, TAM(pontos));
+    Ponto *par = closest_pair(pontos, TAM(pontos));
     ASSERT_TRUE(par != NULL);
     ASSERT_TRUE(contemPonto(par, 2, 0, 0));
     ASSERT_TRUE(contemPonto(par, 2, 1, 0));
     free(par);
 
     // testa conjunto com só dois pontos
-    par = closestPair(pontos, 2);
+    par = closest_pair(pontos, 2);
     ASSERT_TRUE(par != NULL);
     ASSERT_TRUE(contemPonto(par, 2, 0, 0));
     ASSERT_TRUE(contemPonto(par, 2, 5, 5));
@@ -43,15 +43,15 @@ static void testClosestPair(void) {
 
     // testa pontos repetidos (distância zero)
     Ponto repetidos[] = { {3, 3}, {7, 1}, {3, 3} };
-    par = closestPair(repetidos, TAM(repetidos));
+    par = closest_pair(repetidos, TAM(repetidos));
     ASSERT_TRUE(par != NULL);
     ASSERT_NEAR(par[0].x, par[1].x, EPS);
     ASSERT_NEAR(par[0].y, par[1].y, EPS);
     free(par);
 
     // testa entradas inválidas
-    ASSERT_TRUE(closestPair(pontos, 1) == NULL);
-    ASSERT_TRUE(closestPair(NULL, 4) == NULL);
+    ASSERT_TRUE(closest_pair(pontos, 1) == NULL);
+    ASSERT_TRUE(closest_pair(NULL, 4) == NULL);
 }
 
 static void testIntersectionPolygon(void) {
@@ -62,7 +62,7 @@ static void testIntersectionPolygon(void) {
     int n = -1;
 
     // testa quadrados sobrepostos, as bordas cruzam em dois pontos
-    Ponto *pontos = intersectionPolygon(a, b, &n);
+    Ponto *pontos = intersection_polygon(a, b, &n);
     ASSERT_TRUE(n == 2);
     ASSERT_TRUE(pontos != NULL);
     ASSERT_TRUE(contemPonto(pontos, n, 4, 2));
@@ -70,12 +70,12 @@ static void testIntersectionPolygon(void) {
     free(pontos);
 
     // testa polígonos sem ponto em comum
-    pontos = intersectionPolygon(a, longe, &n);
+    pontos = intersection_polygon(a, longe, &n);
     ASSERT_TRUE(pontos == NULL);
     ASSERT_TRUE(n == 0);
 
     // testa um dentro do outro (ou seja, sem interseção nas bordas)
-    pontos = intersectionPolygon(a, dentro, &n);
+    pontos = intersection_polygon(a, dentro, &n);
     ASSERT_TRUE(pontos == NULL);
     ASSERT_TRUE(n == 0);
 
@@ -92,17 +92,17 @@ static void testIsPolygonInside(void) {
     Poligono longe = create_polygon(TAM(QUADRADO_LONGE), QUADRADO_LONGE);
 
     // testa que dentro está dentro de A
-    ASSERT_TRUE(isPolygonInside(dentro, a) == true);
+    ASSERT_TRUE(is_polygon_inside(dentro, a) == true);
 
     // testa que A não está dentro de dentro
-    ASSERT_TRUE(isPolygonInside(a, dentro) == false);
+    ASSERT_TRUE(is_polygon_inside(a, dentro) == false);
 
     // testa que A está dentro de A (pois a borda conta)
-    ASSERT_TRUE(isPolygonInside(a, a) == true);
+    ASSERT_TRUE(is_polygon_inside(a, a) == true);
 
     // testa polígonos que não estão totalmente contidos um no outro
-    ASSERT_TRUE(isPolygonInside(a, b) == false);
-    ASSERT_TRUE(isPolygonInside(a, longe) == false);
+    ASSERT_TRUE(is_polygon_inside(a, b) == false);
+    ASSERT_TRUE(is_polygon_inside(a, longe) == false);
 
     free_polygon(&a);
     free_polygon(&b);
@@ -118,7 +118,7 @@ static void testIntersectionRegion(void) {
     int n = -1;
 
     // testa quadrados sobrepostos, a região é um quadrado menor
-    Poligono *regioes = intersectionRegion(a, b, &n);
+    Poligono *regioes = intersection_region(a, b, &n);
     ASSERT_TRUE(n == 1);
     ASSERT_TRUE(regioes != NULL);
     ASSERT_TRUE(regioes[0].n == 4);
@@ -127,7 +127,7 @@ static void testIntersectionRegion(void) {
     free(regioes);
 
     // testa um polígono dentro do outro, a região deve ser o próprio polígono menor
-    regioes = intersectionRegion(dentro, a, &n);
+    regioes = intersection_region(dentro, a, &n);
     ASSERT_TRUE(n == 1);
     ASSERT_TRUE(regioes != NULL);
     ASSERT_NEAR(polygon_area(&regioes[0]), 1.0, EPS);
@@ -135,7 +135,7 @@ static void testIntersectionRegion(void) {
     free(regioes);
 
     // testa que a ordem dos polígonos não muda a região
-    regioes = intersectionRegion(a, dentro, &n);
+    regioes = intersection_region(a, dentro, &n);
     ASSERT_TRUE(n == 1);
     ASSERT_TRUE(regioes != NULL);
     ASSERT_NEAR(polygon_area(&regioes[0]), 1.0, EPS);
@@ -143,7 +143,7 @@ static void testIntersectionRegion(void) {
     free(regioes);
 
     // testa polígonos sem região em comum
-    regioes = intersectionRegion(a, longe, &n);
+    regioes = intersection_region(a, longe, &n);
     ASSERT_TRUE(regioes == NULL);
     ASSERT_TRUE(n == 0);
 

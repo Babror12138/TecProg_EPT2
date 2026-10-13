@@ -164,23 +164,23 @@ static void testPolygonContainsPoint(void) {
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
 
     // testa ponto dentro do polígono
-    Ponto dentro = CreatPoint(1, 3);
+    Ponto dentro = create_point(1, 3);
     ASSERT_TRUE(polygon_contains_point(&p, &dentro) == 1);
 
     // testa pontos em cima da borda ou do vértice
-    Ponto vertice = CreatPoint(4, 4), borda = CreatPoint(2, 0);
+    Ponto vertice = create_point(4, 4), borda = create_point(2, 0);
     ASSERT_TRUE(polygon_contains_point(&p, &vertice) == 1);
     ASSERT_TRUE(polygon_contains_point(&p, &borda) == 1);
 
     // testa pontos fora do polígono
-    Ponto foraEsquerda = CreatPoint(-1, 2), foraAcima = CreatPoint(2, 5);
+    Ponto foraEsquerda = create_point(-1, 2), foraAcima = create_point(2, 5);
     ASSERT_TRUE(polygon_contains_point(&p, &foraEsquerda) == 0);
     ASSERT_TRUE(polygon_contains_point(&p, &foraAcima) == 0);
     free_polygon(&p);
 
     // testa ponto na reentrância de um polígono côncavo, isto é, fora dele
     p = create_polygon(TAM(CONCAVO), CONCAVO);
-    Ponto reentrancia = CreatPoint(3.5, 1);
+    Ponto reentrancia = create_point(3.5, 1);
     ASSERT_TRUE(polygon_contains_point(&p, &reentrancia) == 0);
     ASSERT_TRUE(polygon_contains_point(&p, &dentro) == 1);
     free_polygon(&p);

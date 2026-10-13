@@ -21,7 +21,7 @@ static Poligono vazio(void) {
 }
 
 // função para comparar dois pontos (checa se um é "menor" que outro)
-static int menorPonto(const Ponto *a, const Ponto *b) {
+static int menor_ponto(const Ponto *a, const Ponto *b) {
     if (a->y == b->y) return a->x < b->x;
     return a->y < b->y;
 }
@@ -36,7 +36,7 @@ Poligono convex_hull_jarvis(int n, const Ponto *pontos) {
 
     // seleciona ponto inicial como o menor ponto
     int ini = 0;
-    for (int i = 1; i < n; i++) if (menorPonto(&pontos[i], &pontos[ini])) ini = i;
+    for (int i = 1; i < n; i++) if (menor_ponto(&pontos[i], &pontos[ini])) ini = i;
 
     int atual = ini, k = 0;
     do {
@@ -100,7 +100,7 @@ Poligono convex_hull_graham(int n, const Ponto *pontos) {
 
     // acha menor ponto
     int menor = 0;
-    for (int i = 1; i < n; i++) if (menorPonto(&v[i], &v[menor])) menor = i;
+    for (int i = 1; i < n; i++) if (menor_ponto(&v[i], &v[menor])) menor = i;
 
     // troca o menor ponto pelo primeiro ponto
     Ponto t = v[0];
@@ -150,7 +150,7 @@ double convex_hull_diameter(int n, const Ponto *pontos) {
     double d = 0;
     for (int i = 0; i < conv.n; i++) {
         for (int j = i + 1; j < conv.n; j++) {
-            double x = PointDistance(&conv.vertices[i], &conv.vertices[j]);
+            double x = point_distance(&conv.vertices[i], &conv.vertices[j]);
             if (x > d) d = x;
         }
     }

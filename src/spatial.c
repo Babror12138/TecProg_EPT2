@@ -6,7 +6,7 @@
 
 #define EPS 1e-5f
 
-Ponto* closestPair(Ponto* pontos, int n) {
+Ponto* closest_pair(Ponto* pontos, int n) {
   if (pontos == NULL || n < 2) {
     return NULL;
   }
@@ -40,7 +40,7 @@ Ponto* closestPair(Ponto* pontos, int n) {
   return parMaisProximo;
 }
 
-Ponto* intersectionPolygon(Poligono A, Poligono B, int *length) {
+Ponto* intersection_polygon(Poligono A, Poligono B, int *length) {
   int n = 10;
   int k = 0;
   *length = 0;
@@ -49,22 +49,22 @@ Ponto* intersectionPolygon(Poligono A, Poligono B, int *length) {
   if (intersects == NULL) return NULL;
 
   for (int i = 0; i < A.n; i++) {
-    Segmento segA = CreatSegment(A.vertices[i], A.vertices[(i + 1) % A.n]);
+    Segmento segA = create_segment(A.vertices[i], A.vertices[(i + 1) % A.n]);
 
     for (int j = 0; j < B.n; j++) {
-      Segmento segB = CreatSegment(B.vertices[j], B.vertices[(j + 1) % B.n]);
+      Segmento segB = create_segment(B.vertices[j], B.vertices[(j + 1) % B.n]);
 
-      int pos = LinesPosition(&segA, &segB);
+      int pos = lines_position(&segA, &segB);
 
       // verifica se são retas paralelas
       if (pos == 0) continue;
 
-      Ponto intersectionPoint = LineIntersection(&segA, &segB);
+      Ponto intersectionPoint = line_intersection(&segA, &segB);
 
       // verifica se o ponto está nas arestas
       if (
-        !PointOnSegment(&segA, &intersectionPoint) ||
-        !PointOnSegment(&segB, &intersectionPoint)
+        !point_on_segment(&segA, &intersectionPoint) ||
+        !point_on_segment(&segB, &intersectionPoint)
       ) continue;
 
       // remove pontos de interseção duplicados
@@ -125,7 +125,7 @@ Poligono addIntersectionPoints(Poligono A, Poligono B) {
   // if (xPolygonA == NULL) return NULL;
 
   for (int i = 0; i < A.n; i++) {
-    Segmento segA = CreatSegment(A.vertices[i], A.vertices[(i + 1) % A.n]);
+    Segmento segA = create_segment(A.vertices[i], A.vertices[(i + 1) % A.n]);
 
     int m = 10;
     Ponto* intersects = (Ponto*) malloc(m * sizeof(Ponto));
@@ -142,19 +142,19 @@ Poligono addIntersectionPoints(Poligono A, Poligono B) {
     }
 
     for (int j = 0; j < B.n; j++) {
-      Segmento segB = CreatSegment(B.vertices[j], B.vertices[(j + 1) % B.n]);
+      Segmento segB = create_segment(B.vertices[j], B.vertices[(j + 1) % B.n]);
 
-      int pos = LinesPosition(&segA, &segB);
+      int pos = lines_position(&segA, &segB);
 
       // verifica se são retas paralelas
       if (pos == 0) continue;
 
-      Ponto intersectionPoint = LineIntersection(&segA, &segB);
+      Ponto intersectionPoint = line_intersection(&segA, &segB);
 
       // verifica se o ponto está nas arestas
       if (
-        !PointOnSegment(&segA, &intersectionPoint) ||
-        !PointOnSegment(&segB, &intersectionPoint)
+        !point_on_segment(&segA, &intersectionPoint) ||
+        !point_on_segment(&segB, &intersectionPoint)
       ) continue;
 
       // remove pontos de interseção duplicados
@@ -210,7 +210,7 @@ Poligono addIntersectionPoints(Poligono A, Poligono B) {
   return create_polygon(k, xPolygonA);
 }
 
-bool isPolygonInside(Poligono A, Poligono B) {
+bool is_polygon_inside(Poligono A, Poligono B) {
   for (int i = 0; i < A.n; i++) {
     if (!polygon_contains_point(&B, &A.vertices[i])) {
       return false;
@@ -220,11 +220,11 @@ bool isPolygonInside(Poligono A, Poligono B) {
   return true;
 }
 
-Poligono* intersectionRegion(Poligono A, Poligono B, int* length) {
+Poligono* intersection_region(Poligono A, Poligono B, int* length) {
   *length = 0;
 
   // algum poligono está contido no outro, então o poligono de interseção é o contido
-  if (isPolygonInside(A, B)) {
+  if (is_polygon_inside(A, B)) {
     Poligono* region = (Poligono*) malloc(1 * sizeof(Poligono));
     if (region == NULL) return NULL;
 
@@ -233,7 +233,7 @@ Poligono* intersectionRegion(Poligono A, Poligono B, int* length) {
     return region;
   }
 
-  if (isPolygonInside(B, A)) {
+  if (is_polygon_inside(B, A)) {
     Poligono* region = (Poligono*) malloc(1 * sizeof(Poligono));
     if (region == NULL) return NULL;
 
@@ -243,7 +243,7 @@ Poligono* intersectionRegion(Poligono A, Poligono B, int* length) {
   }
 
   int intersectsCount = 0;
-  Ponto* intersects = intersectionPolygon(A, B, &intersectsCount);
+  Ponto* intersects = intersection_polygon(A, B, &intersectsCount);
 
   // poligonos não tem região de interseção em comum
   if (intersectsCount == 0) return NULL;

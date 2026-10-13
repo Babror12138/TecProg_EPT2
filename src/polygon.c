@@ -70,9 +70,9 @@ double polygon_perimeter(const Poligono *poligono) {
 	double perimeter = 0;
 
 	for (int i = 0; i < n - 1; i++) {
-		perimeter += PointDistance(&vertices[i], &vertices[i+1]);
+		perimeter += point_distance(&vertices[i], &vertices[i+1]);
 	}
-	perimeter += PointDistance(&vertices[n-1], &vertices[0]);
+	perimeter += point_distance(&vertices[n-1], &vertices[0]);
 
 	return perimeter;
 }
@@ -161,9 +161,9 @@ int polygon_contains_point(const Poligono *poligono, Ponto *ponto) {
 		Ponto p1 = vertices[i];
 		Ponto p2 = vertices[(i+1) % n];
 
-		Segmento s = CreatSegment(p1, p2);
+		Segmento s = create_segment(p1, p2);
 
-		if (PointOnSegment(&s, ponto)) {
+		if (point_on_segment(&s, ponto)) {
 			return 1;
 		}
 
