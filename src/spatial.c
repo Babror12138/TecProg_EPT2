@@ -8,16 +8,20 @@ Ponto* closest_pair(Ponto* pontos, int n) {
     return NULL;
   }
 
+  // guarda os melhores índices até então
   int melhorI = 0;
   int melhorJ = 1;
+  // salvando a distancia ao quadrado
   double menorDist2 = pow(pontos[0].x - pontos[1].x, 2) + pow(pontos[0].y - pontos[1].y, 2);
 
+  // verifica todos os pares de pontos para achar a menor distância
   for (int i = 0; i < n; i++) {
     for (int j = i + 1; j < n; j++) {
       double dx = pontos[i].x - pontos[j].x;
       double dy = pontos[i].y - pontos[j].y;
       double dist2 = dx * dx + dy * dy;
 
+      // achamos um par melhor de pontos
       if (dist2 < menorDist2) {
         menorDist2 = dist2;
         melhorI = i;
@@ -27,9 +31,7 @@ Ponto* closest_pair(Ponto* pontos, int n) {
   }
 
   Ponto* parMaisProximo = (Ponto*) malloc(2 * sizeof(Ponto));
-  if (parMaisProximo == NULL) {
-    return NULL;
-  }
+  if (parMaisProximo == NULL) return NULL;
 
   parMaisProximo[0] = pontos[melhorI];
   parMaisProximo[1] = pontos[melhorJ];
@@ -37,61 +39,82 @@ Ponto* closest_pair(Ponto* pontos, int n) {
   return parMaisProximo;
 }
 
+// encontro o pontode interseção aos dois segmentos dados se existir
+static int find_intersection_point(Segmento segA, Segmento segB, Ponto* intersection_point) {
+  if (intersection_point == NULL) return 0;
+  if (lines_position(&segA, &segB) == PARALELOS) return 0;
+
+  Ponto point = line_intersection(&segA, &segB);
+
+  // verifica se o ponto está nas arestas
+  if (!point_on_segment(&segA, &point) || !point_on_segment(&segB, &point)) return 0;
+
+  *intersection_point = point;
+  return 1;
+}
+
+// verifica se o ponto não está no vetor de pontos
+static int contains_point(Ponto point, const Ponto *points, int size) {
+  for (int i = 0; i < size; i++) {
+    if (
+      fabs(points[i].x - point.x) <= EPS &&
+      fabs(points[i].y - point.y) <= EPS
+    ) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
+// aloca mais memória e trata erros de alocação para o ponteiro dado
+static void* resize_array(void* p, int size, int byte) {
+  void* temp = realloc(p, size * byte);
+  if (temp == NULL) {
+    free(p);
+    return NULL;
+  }
+
+  return temp;
+}
+
+// aloca mais memória e trata erros de alocação para o ponteiro dado
+static void* resize_increment_array(void* p, int* size, int byte, int increment) {
+  int newSize = *size + increment;
+
+  void* temp = resize_array(p, newSize, byte);
+  if (temp != NULL) *size = newSize;
+
+  return temp;
+}
+
 Ponto* intersection_polygon(Poligono A, Poligono B, int *length) {
   int n = 10;
-  int k = 0;
+  int k = 0; // indice para o vetor dos pontos de interseção
   *length = 0;
   
   Ponto* intersects = (Ponto*) malloc(n * sizeof(Ponto));
   if (intersects == NULL) return NULL;
 
+  // percorre todos os pares de arestas para contabilizar os pontos de interseção
   for (int i = 0; i < A.n; i++) {
     Segmento segA = create_segment(A.vertices[i], A.vertices[(i + 1) % A.n]);
 
     for (int j = 0; j < B.n; j++) {
       Segmento segB = create_segment(B.vertices[j], B.vertices[(j + 1) % B.n]);
 
-      int pos = lines_position(&segA, &segB);
+      Ponto intersectionPoint;
+      int is_intersection = find_intersection_point(segA, segB, &intersectionPoint);
+      if (!is_intersection) continue;
 
-      // verifica se são retas paralelas
-      if (pos == 0) continue;
-
-      Ponto intersectionPoint = line_intersection(&segA, &segB);
-
-      // verifica se o ponto está nas arestas
-      if (
-        !point_on_segment(&segA, &intersectionPoint) ||
-        !point_on_segment(&segB, &intersectionPoint)
-      ) continue;
-
-      // remove pontos de interseção duplicados
-      int duplicated = 0;
-
-      for (int l = 0; l < k; l++) {
-        if (
-          fabs(intersects[l].x - intersectionPoint.x) <= EPS &&
-          fabs(intersects[l].y - intersectionPoint.y) <= EPS
-        ) {
-          duplicated = 1;
-          break;
-        }
-      }
-
-      if (!duplicated) {
-        intersects[k++] = intersectionPoint;
-      }
+      if (!contains_point(intersectionPoint, intersects, k)) continue;
+    
+      intersects[k++] = intersectionPoint;
 
       // alocação de mais memória
       if (k == n) {
-        n += 10;
-
-        Ponto* temp = realloc(intersects, n * sizeof(Ponto));
-        if (temp == NULL) {
-          free(intersects);
-          return NULL;
-        }
-
-        intersects = temp;
+        intersects = resize_increment_array(intersects, &n, sizeof(Ponto), 10);
+        if (intersects == NULL) return NULL;
       }
     }
   }
@@ -101,85 +124,58 @@ Ponto* intersection_polygon(Poligono A, Poligono B, int *length) {
     return NULL;
   }
 
-  Ponto* temp = realloc(intersects, k * sizeof(Ponto));
+  // garante que o vetor final tenha o tamanho correto
+  intersects = resize_array(intersects, n, sizeof(Ponto));
+  if (intersects == NULL) return NULL;
 
-  if (temp == NULL) {
-    free(intersects);
-    return NULL;
-  }
-
-  intersects = temp;
   *length = k;
-
   return intersects;
 }
 
-Poligono add_intersection_points(Poligono A, Poligono B) {
+// intercala o poligono A com as interseções com o poligono B
+static int add_intersection_points(Poligono A, Poligono B, Poligono* xA) {
   int n = 10;
-  int k = 0;
-  
+  int k = 0; // indice para xPolygonA, que são os pontos de A com interseção B
+
   Ponto* xPolygonA = (Ponto*) malloc(n * sizeof(Ponto));
-  // if (xPolygonA == NULL) return NULL;
+  if (xPolygonA == NULL) return 0;
 
   for (int i = 0; i < A.n; i++) {
-    Segmento segA = create_segment(A.vertices[i], A.vertices[(i + 1) % A.n]);
-
     int m = 10;
     Ponto* intersects = (Ponto*) malloc(m * sizeof(Ponto));
-    // if (intersects == NULL) return NULL;
-
-    int l = 0;
+    if (intersects == NULL) return 0;
 
     xPolygonA[k++] = A.vertices[i];
-    if (k == n) {
-      n += 10;
 
-      Ponto* temp = realloc(xPolygonA, n * sizeof(Ponto));
-      xPolygonA = temp;
+    // alocação de mais memória
+    if (k == n) {
+      xPolygonA = resize_increment_array(xPolygonA, &n, sizeof(Ponto), 10);
+      if (xPolygonA == NULL) return 0;
     }
+
+    Segmento segA = create_segment(A.vertices[i], A.vertices[(i + 1) % A.n]);
+    int l = 0; // indice de intersects
 
     for (int j = 0; j < B.n; j++) {
       Segmento segB = create_segment(B.vertices[j], B.vertices[(j + 1) % B.n]);
 
-      int pos = lines_position(&segA, &segB);
+      Ponto intersectionPoint;
+      int is_intersection = find_intersection_point(segA, segB, &intersectionPoint);
+      if (!is_intersection) continue;
 
-      // verifica se são retas paralelas
-      if (pos == PARALELOS) continue;
+      if (!contains_point(intersectionPoint, intersects, k)) continue;
 
-      Ponto intersectionPoint = line_intersection(&segA, &segB);
-
-      // verifica se o ponto está nas arestas
-      if (
-        !point_on_segment(&segA, &intersectionPoint) ||
-        !point_on_segment(&segB, &intersectionPoint)
-      ) continue;
-
-      // remove pontos de interseção duplicados
-      int duplicated = 0;
-
-      for (int x = 0; x < l; x++) {
-        if (
-          fabs(intersects[x].x - intersectionPoint.x) <= EPS &&
-          fabs(intersects[x].y - intersectionPoint.y) <= EPS 
-        ) {
-          duplicated = 1;
-          break;
-        }
-      }
-
-      if (!duplicated) {
-        intersects[l++] = intersectionPoint;
-      }
+      intersects[l++] = intersectionPoint;
 
       // alocação de mais memória
       if (l == m) {
-        m += 10;
-
-        Ponto* temp = realloc(intersects, m * sizeof(Ponto));
-        intersects = temp;
+        intersects = resize_increment_array(intersects, &m, sizeof(Ponto), 10);
+        if (intersects == NULL) return 0;
       }
     }
 
+    // bubble sort
+    // ordena os pontos de interseção em ordem em relação ao ponto do segmento atual
     for (int x = 1; x <= l; x++) {
       for (int y = 1; y <= l - x; y++) {
         double currDist = pow(intersects[y].x - segA.p1.x, 2) + pow(intersects[y].y - segA.p1.y, 2);
@@ -193,21 +189,25 @@ Poligono add_intersection_points(Poligono A, Poligono B) {
       }
     }
 
+    // adiciona os pontos de interseção na ordem
     for (int x = 0; x < l; x++) {
       xPolygonA[k++] = intersects[x];
       if (k == n) {
-        n += 10;
-
-        Ponto* temp = realloc(xPolygonA, n * sizeof(Ponto));
-        xPolygonA = temp;
+        xPolygonA = resize_increment_array(xPolygonA, &n, sizeof(Ponto), 10);
+        if (xPolygonA == NULL) return 0;
       }
     }
+
+    free(intersects);
   }
 
-  return create_polygon(k, xPolygonA);
+  *xA = create_polygon(k, xPolygonA);
+  return 1;
 }
 
+// verifica se um poligono A está totalmente contido no poligono B
 int is_polygon_inside(Poligono A, Poligono B) {
+  // verifica se todos os pontos de A estão dentro de B
   for (int i = 0; i < A.n; i++) {
     if (!polygon_contains_point(&B, &A.vertices[i])) {
       return 0;
@@ -217,10 +217,74 @@ int is_polygon_inside(Poligono A, Poligono B) {
   return 1;
 }
 
+// retona, em ordem, os pontos, começando em start, que estão contido em B até o próximo ponto de interseção
+static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* intersects, int intersectsCount, int* end, int* pathSize) {
+  int pathCount = 20;
+  int pathIdx = 0;
+  Ponto* pathPoints = (Ponto*) malloc(pathCount * sizeof(Ponto));
+
+  // procura o indice de start
+  int startIndex = 0;
+  for (int j = 0; j < xA.n; j++) {
+    if (xA.vertices[j].x == start.x && xA.vertices[j].y == start.y) {
+      startIndex = j;
+      break;
+    }
+  }
+
+  // define a direção de busca
+  int dir = 0;
+  if (polygon_contains_point(&B, &xA.vertices[(startIndex + 1) % xA.n])) {
+    dir = 1;
+  }
+  if (polygon_contains_point(&B, &xA.vertices[(startIndex - 1 + xA.n) % xA.n])) {
+    dir = -1;
+  }
+
+  if (dir == 0) return NULL;
+
+  Ponto curr = start;
+  int k = startIndex; // indice nos pontos de xA
+
+  while (1) {
+    // adiciona o ponto atual no caminho
+    pathPoints[pathIdx++] = curr;
+
+    // alocação de mais memória
+    if (pathIdx == pathCount) {
+      pathPoints = resize_increment_array(pathPoints, &pathCount, sizeof(Ponto), 20);
+      if (pathPoints == NULL) return NULL;
+    }
+
+    // próximo ponto
+    k = (k + dir + xA.n) % xA.n;
+    curr = xA.vertices[k];
+
+    // verifica se curr é ponto de interseção
+    int found = -1;
+    for (int j = 0; j < intersectsCount; j++) {
+      if (intersects[j].x == curr.x && intersects[j].y == curr.y) {
+        found = j;
+        break;
+      }
+    }
+
+    // se curr é ponto de interseção, então o caminho de pontos de
+    // start até curr (end) é totalmente contido em B
+    if (found != -1) {
+      *end = found;
+      break;
+    }
+  }
+
+  *pathSize = pathIdx;
+  return pathPoints;
+}
+
 Poligono* intersection_region(Poligono A, Poligono B, int* length) {
   *length = 0;
 
-  // algum poligono está contido no outro, então o poligono de interseção é o contido
+  // se algum poligono está contido no outro, então o poligono de interseção é o contido
   if (is_polygon_inside(A, B)) {
     Poligono* region = (Poligono*) malloc(1 * sizeof(Poligono));
     if (region == NULL) return NULL;
@@ -245,9 +309,14 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
   // poligonos não tem região de interseção em comum
   if (intersectsCount == 0) return NULL;
 
-  Poligono xPolygonA = add_intersection_points(A, B);
-  Poligono xPolygonB = add_intersection_points(B, A);
+  // adiciona as interseções aos poligonos, preservando a ordem dos pontos
+  Poligono xPolygonA;
+  if (!add_intersection_points(A, B, &xPolygonA)) return NULL;
 
+  Poligono xPolygonB;
+  if (!add_intersection_points(B, A, &xPolygonB)) return NULL;
+
+  // diz se o i-ésimo ponto de interseção já foi utlizado
   int* used = (int*) calloc(intersectsCount, sizeof(int));
   int regionsCount = 5;
   int regionsIdx = 0;
@@ -256,125 +325,32 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
   for (int i = 0; i < intersectsCount; i++) {
     if (used[i]) continue;
 
-    Ponto X = intersects[i];
-    Ponto Y = X;
+    int indexEnd;
+    int pathCount1 = 0;
+    Ponto* pathPoints1 = find_points_path(intersects[i], xPolygonA, B, intersects, intersectsCount, &indexEnd, &pathCount1);
 
-    int regCount = 20;
-    int regIdx = 0;
-    Ponto* regPoints = (Ponto*) malloc(regCount * sizeof(Ponto));
+    int _;
+    int pathCount2 = 0;
+    Ponto* pathPoints2 = find_points_path(intersects[indexEnd], xPolygonB, A, intersects, intersectsCount, &_, &pathCount2);
 
-    // procura o index do ponto X
-    int Xidx = 0;
-    for (int j = 0; j < xPolygonA.n; j++) {
-      if (xPolygonA.vertices[j].x == X.x && xPolygonA.vertices[j].y == X.y) {
-        Xidx = j;
-        break;
-      }
-    }
+    // marca que utilizamos estes pontos de interseção
+    used[i] = 1;
+    used[indexEnd] = 1;
 
-    // define a direção de busca
-    int dir = 0;
-    if (polygon_contains_point(&B, &xPolygonA.vertices[(Xidx + 1) % xPolygonA.n])) {
-      dir = 1;
-    }
-    if (polygon_contains_point(&B, &xPolygonA.vertices[(Xidx - 1 + xPolygonA.n) % xPolygonA.n])) {
-      dir = -1;
-    }
+    Ponto regPoints[pathCount1 + pathCount2];
+    for (int j = 0; j < pathCount1; j++) regPoints[j] = pathPoints1[j];
+    for (int j = 0; j < pathCount2; j++) regPoints[pathCount1 + j] = pathPoints2[j];
 
-    Ponto curr = X;
-    
-    if (dir != 0) {
-      int k = Xidx;
-
-      while (1) {
-        regPoints[regIdx++] = curr;
-        if (regIdx == regCount) {
-          regCount += 10;
-          Ponto* temp = realloc(regPoints, regCount * sizeof(Ponto));
-          if (temp == NULL) return NULL;
-          regPoints = temp;
-        }
-
-        curr = xPolygonA.vertices[(k + dir + xPolygonA.n) % xPolygonA.n];
-        k = (k + dir + xPolygonA.n) % xPolygonA.n;
-
-        // Y é o ponto que fecha um lado da região
-        int found = 0;
-        for (int j = 0; j < intersectsCount; j++) {
-          if (intersects[j].x == curr.x && intersects[j].y == curr.y) {
-            found = 1;
-            used[j] = 1;
-            break;
-          }
-        }
-
-        if (found) {
-          Y = curr;
-          break;
-        }
-      }
-    }
-
-    // procura o index do ponto Y
-    int Yidx = 0;
-    for (int j = 0; j < xPolygonB.n; j++) {
-      if (xPolygonB.vertices[j].x == Y.x && xPolygonB.vertices[j].y == Y.y) {
-        Yidx = j;
-        break;
-      }
-    }
-
-    // define a direção de busca
-    dir = 0;
-    if (polygon_contains_point(&A, &xPolygonB.vertices[(Yidx + 1) % xPolygonB.n])) {
-      dir = 1;
-    }
-    if (polygon_contains_point(&A, &xPolygonB.vertices[(Yidx - 1 + xPolygonB.n) % xPolygonB.n])) {
-      dir = -1;
-    }
-
-    if (dir != 0) {
-      int k = Yidx;
-
-      while (1) {
-        regPoints[regIdx++] = curr;
-        if (regIdx == regCount) {
-          regCount += 10;
-          Ponto* temp = realloc(regPoints, regCount * sizeof(Ponto));
-          if (temp == NULL) return NULL;
-          regPoints = temp;
-        }
-
-        curr = xPolygonB.vertices[(k + dir + xPolygonB.n) % xPolygonB.n];
-        k = (k + dir + xPolygonB.n) % xPolygonB.n;
-
-        // X é o ponto que fecha um lado da região
-        int found = 0;
-        for (int j = 0; j < intersectsCount; j++) {
-          if (intersects[j].x == curr.x && intersects[j].y == curr.y) {
-            found = 1;
-            used[j] = 1;
-            break;
-          }
-        }
-
-        if (found) break;
-      }
-    }
-
-    Poligono region = create_polygon(regIdx, regPoints);
+    Poligono region = create_polygon(pathCount1 + pathCount2, regPoints);
     regions[regionsIdx++] = region;
     if (regionsIdx == regionsCount) {
-      regionsCount += 10;
-      Poligono* temp = realloc(regions, regionsCount * sizeof(Poligono));
-      if (temp == NULL) return NULL;
-      regions = temp;
+      regions = resize_increment_array(regions, &regionsCount, sizeof(Poligono), 10);
+      if (regions == NULL) return NULL;
     }
   }
 
-  Poligono* temp = realloc(regions, regionsIdx * sizeof(Poligono));
-  if (temp == NULL) return NULL;
-  regions = temp;
+  regions = resize_array(regions, regionsIdx, sizeof(Poligono));
+  if (regions == NULL) return NULL;
 
   *length = regionsIdx;
   return regions;
