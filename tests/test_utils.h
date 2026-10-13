@@ -28,7 +28,7 @@ static inline void checkNear(double obtido, double esperado, double eps, const c
  * @brief Verifica se uma condição é verdadeira e registra falha caso contrário
  * @param cond expressão que deve ser verdadeira
  */
-#define ASSERT_TRUE(cond) checkTrue(!!(cond), #cond, __FILE__, __LINE__);
+#define ASSERT_TRUE(cond) checkTrue(!!(cond), #cond, __FILE__, __LINE__)
 
 /**
  * @brief Verifica se dois doubles são iguais (com uma tolerância)
@@ -36,7 +36,7 @@ static inline void checkNear(double obtido, double esperado, double eps, const c
  * @param esperado valor esperado no teste
  * @param eps tolerância máxima aceita
  */
-#define ASSERT_NEAR(obtido, esperado, eps) checkNear(obtido, esperado, eps, #obtido, #esperado, __FILE__, __LINE__);
+#define ASSERT_NEAR(obtido, esperado, eps) checkNear(obtido, esperado, eps, #obtido, #esperado, __FILE__, __LINE__)
 
 /**
  * @brief Imprime o resumo do módulo que testado e retorna o código de saída do teste
