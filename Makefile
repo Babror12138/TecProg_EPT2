@@ -154,3 +154,6 @@ help:
 	@echo ""
 	@echo "Instalação sem privilégios de administrador:"
 	@echo '  make install PREFIX=$$HOME/.local'
+
+# faz com que a Makefile também rastreie os headers usando arquivos .d
+-include $(LIB_OBJS:.o=.d) $(APP_OBJS:.o=.d) $(TEST_OBJS:.o=.d)
