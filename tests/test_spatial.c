@@ -2,7 +2,6 @@
 #include "test_utils.h"
 #include "spatial.h"
 
-#define EPS 1e-6
 #define TAM(v) ((int)(sizeof(v) / sizeof((v)[0])))
 
 // quadrado de lado 4 usado como base dos testes
@@ -92,17 +91,17 @@ static void testIsPolygonInside(void) {
     Poligono longe = create_polygon(TAM(QUADRADO_LONGE), QUADRADO_LONGE);
 
     // testa que dentro está dentro de A
-    ASSERT_TRUE(is_polygon_inside(dentro, a) == true);
+    ASSERT_TRUE(is_polygon_inside(dentro, a) == 1);
 
     // testa que A não está dentro de dentro
-    ASSERT_TRUE(is_polygon_inside(a, dentro) == false);
+    ASSERT_TRUE(is_polygon_inside(a, dentro) == 0);
 
     // testa que A está dentro de A (pois a borda conta)
-    ASSERT_TRUE(is_polygon_inside(a, a) == true);
+    ASSERT_TRUE(is_polygon_inside(a, a) == 1);
 
     // testa polígonos que não estão totalmente contidos um no outro
-    ASSERT_TRUE(is_polygon_inside(a, b) == false);
-    ASSERT_TRUE(is_polygon_inside(a, longe) == false);
+    ASSERT_TRUE(is_polygon_inside(a, b) == 0);
+    ASSERT_TRUE(is_polygon_inside(a, longe) == 0);
 
     free_polygon(&a);
     free_polygon(&b);
@@ -158,5 +157,5 @@ int main(void) {
     testIntersectionPolygon();
     testIsPolygonInside();
     testIntersectionRegion();
-    return test_report("spatial");
+    return testReport("spatial");
 }

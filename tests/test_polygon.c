@@ -1,7 +1,6 @@
 #include "test_utils.h"
 #include "polygon.h"
 
-#define EPS 1e-6
 #define TAM(v) ((int)(sizeof(v) / sizeof((v)[0])))
 
 // quadrado de lado 4 em ordem horária e anti-horária
@@ -198,5 +197,5 @@ int main(void) {
     testPolygonCentroid();
     testIsConvex();
     testPolygonContainsPoint();
-    return test_report("polygon");
+    return testReport("polygon");
 }

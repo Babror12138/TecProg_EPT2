@@ -3,9 +3,7 @@
 #include "general.h"
 #include "geometry2d.h"
 
-#define EPS 1e-5f
-
-int point_on_segment(Segmento *SR, Ponto *p){
+int point_on_segment(Segmento *SR, Ponto *p) {
 	// Identificar se o ponto p está dentro do escopo definido pelos dois pontos do segmento
 	double minx = fmin(SR->p1.x, SR->p2.x), maxx = fmax(SR->p1.x, SR->p2.x);
 	double miny = fmin(SR->p1.y, SR->p2.y), maxy = fmax(SR->p1.y, SR->p2.y);
@@ -27,13 +25,13 @@ int point_on_segment(Segmento *SR, Ponto *p){
 	return 1;
 }
 
-double point_distance(Ponto *p1, Ponto *p2){
+double point_distance(Ponto *p1, Ponto *p2) {
 	// Aplicação da fórmula da distância entre pontos
 	double dist = (p1->x - p2->x)*(p1->x - p2->x) + (p1->y - p2->y)*(p1->y - p2->y);
 	return sqrt(dist);
 }
 
-double point_line_distance(Segmento *SR, Ponto *p){
+double point_line_distance(Segmento *SR, Ponto *p) {
 	// Definição dos coeficientes da equação da reta definda pelo segmento de reta SR
 	double a = SR->p2.y - SR->p1.y;
 	double b = -1*(SR->p2.x - SR->p1.x);
@@ -46,7 +44,7 @@ double point_line_distance(Segmento *SR, Ponto *p){
 	return sup / sqrt((a*a) + (b*b));
 }
 
-Ponto line_intersection(Segmento *SR1, Segmento *SR2){
+Ponto line_intersection(Segmento *SR1, Segmento *SR2) {
 	double a1 = SR1->p2.y - SR1->p1.y;
 	double b1 = -(SR1->p2.x - SR1->p1.x);
 	double c1 = -SR1->p1.y * (SR1->p2.x - SR1->p1.x) + SR1->p1.x * (SR1->p2.y - SR1->p1.y);
@@ -66,7 +64,7 @@ Ponto line_intersection(Segmento *SR1, Segmento *SR2){
 }
 
 
-int lines_position(Segmento *SR1, Segmento *SR2){
+int lines_position(Segmento *SR1, Segmento *SR2) {
 	// Define o vetor que define a reta formada pelo segmento de reta SR1
 	double x1 = SR1->p1.x - SR1->p2.x;
 	double y1 = SR1->p1.y - SR1->p2.y;
@@ -74,9 +72,9 @@ int lines_position(Segmento *SR1, Segmento *SR2){
 	// Define o vetor que define a reta formada pelo segmento da reta SR2
 	double x2 = SR2->p1.x - SR2->p2.x;
 	double y2 = SR2->p1.y - SR2->p2.y;
-	
+
 	// Comparação entre os vetores
-	if(fabs(x1*y2 - x2*y1) < EPS) return 0;
-	if(fabs(x1*x2 + y1*y2) < EPS) return 1;
-	else return 2;
+	if(fabs(x1*y2 - x2*y1) < EPS) return PARALELOS;
+	if(fabs(x1*x2 + y1*y2) < EPS) return PERPENDICULARES;
+	else return CONCORRENTES;
 }

@@ -1,7 +1,6 @@
 #include "test_utils.h"
 #include "convex_hull.h"
 
-#define EPS 1e-6
 #define TAM(v) ((int)(sizeof(v) / sizeof((v)[0])))
 
 // quadrado de lado 4 com mais dois pontos dentro
@@ -122,5 +121,5 @@ int main(void) {
     testPerimetro();
     testDiametro();
 
-    return test_report("convex_hull");
+    return testReport("convex_hull");
 }

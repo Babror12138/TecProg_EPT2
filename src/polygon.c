@@ -3,8 +3,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define EPS 1e-6
-
 Poligono create_polygon(int n, const Ponto *vertices) {
 	Poligono poligono;
 	

@@ -1,7 +1,6 @@
 #ifndef SPATIAL
 #define SPATIAL
 
-#include <stdbool.h>
 #include "general.h"
 #include "polygon.h"
 
@@ -34,8 +33,8 @@ Poligono* intersection_region(Poligono A, Poligono B, int *length);
  * @brief Verifica se o poligono A está totalmente contido em B
  * @param A Poligono A
  * @param B Poligono B
- * @return true se A está contido em B, caso contrário false é retornado
+ * @return 1 se A está contido em B, caso contrário 0 é retornado
  */
-bool is_polygon_inside(Poligono A, Poligono B);
+int is_polygon_inside(Poligono A, Poligono B);
 
 #endif

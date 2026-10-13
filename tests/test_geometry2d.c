@@ -1,8 +1,6 @@
 #include "test_utils.h"
 #include "geometry2d.h"
 
-#define EPS 1e-6
-
 static void testPointOnSegment(void) {
     Ponto a = create_point(0, 0), b = create_point(4, 0), meio = create_point(2, 0);
     Segmento s = create_segment(a, b);
@@ -118,5 +116,5 @@ int main(void) {
     testPointLineDistance();
     testLineIntersection();
     testLinesPosition();
-    return test_report("geometry2d");
+    return testReport("geometry2d");
 }

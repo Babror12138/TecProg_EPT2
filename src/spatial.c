@@ -2,9 +2,6 @@
 #include "geometry2d.h"
 #include <math.h>
 #include <stdlib.h>
-#include <stdbool.h>
-
-#define EPS 1e-5f
 
 Ponto* closest_pair(Ponto* pontos, int n) {
   if (pontos == NULL || n < 2) {
@@ -68,14 +65,14 @@ Ponto* intersection_polygon(Poligono A, Poligono B, int *length) {
       ) continue;
 
       // remove pontos de interseção duplicados
-      bool duplicated = false;
+      int duplicated = 0;
 
       for (int l = 0; l < k; l++) {
         if (
           fabs(intersects[l].x - intersectionPoint.x) <= EPS &&
           fabs(intersects[l].y - intersectionPoint.y) <= EPS
         ) {
-          duplicated = true;
+          duplicated = 1;
           break;
         }
       }
@@ -117,7 +114,7 @@ Ponto* intersection_polygon(Poligono A, Poligono B, int *length) {
   return intersects;
 }
 
-Poligono addIntersectionPoints(Poligono A, Poligono B) {
+Poligono add_intersection_points(Poligono A, Poligono B) {
   int n = 10;
   int k = 0;
   
@@ -147,7 +144,7 @@ Poligono addIntersectionPoints(Poligono A, Poligono B) {
       int pos = lines_position(&segA, &segB);
 
       // verifica se são retas paralelas
-      if (pos == 0) continue;
+      if (pos == PARALELOS) continue;
 
       Ponto intersectionPoint = line_intersection(&segA, &segB);
 
@@ -158,14 +155,14 @@ Poligono addIntersectionPoints(Poligono A, Poligono B) {
       ) continue;
 
       // remove pontos de interseção duplicados
-      bool duplicated = false;
+      int duplicated = 0;
 
       for (int x = 0; x < l; x++) {
         if (
           fabs(intersects[x].x - intersectionPoint.x) <= EPS &&
           fabs(intersects[x].y - intersectionPoint.y) <= EPS 
         ) {
-          duplicated = true;
+          duplicated = 1;
           break;
         }
       }
@@ -210,14 +207,14 @@ Poligono addIntersectionPoints(Poligono A, Poligono B) {
   return create_polygon(k, xPolygonA);
 }
 
-bool is_polygon_inside(Poligono A, Poligono B) {
+int is_polygon_inside(Poligono A, Poligono B) {
   for (int i = 0; i < A.n; i++) {
     if (!polygon_contains_point(&B, &A.vertices[i])) {
-      return false;
+      return 0;
     }
   }
 
-  return true;
+  return 1;
 }
 
 Poligono* intersection_region(Poligono A, Poligono B, int* length) {
@@ -248,10 +245,10 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
   // poligonos não tem região de interseção em comum
   if (intersectsCount == 0) return NULL;
 
-  Poligono xPolygonA = addIntersectionPoints(A, B);
-  Poligono xPolygonB = addIntersectionPoints(B, A);
+  Poligono xPolygonA = add_intersection_points(A, B);
+  Poligono xPolygonB = add_intersection_points(B, A);
 
-  bool* used = (bool*) calloc(intersectsCount, sizeof(bool));
+  int* used = (int*) calloc(intersectsCount, sizeof(int));
   int regionsCount = 5;
   int regionsIdx = 0;
   Poligono* regions = (Poligono*) malloc(regionsCount * sizeof(Poligono));
@@ -289,7 +286,7 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
     if (dir != 0) {
       int k = Xidx;
 
-      while (true) {
+      while (1) {
         regPoints[regIdx++] = curr;
         if (regIdx == regCount) {
           regCount += 10;
@@ -302,11 +299,11 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
         k = (k + dir + xPolygonA.n) % xPolygonA.n;
 
         // Y é o ponto que fecha um lado da região
-        bool found = false;
+        int found = 0;
         for (int j = 0; j < intersectsCount; j++) {
           if (intersects[j].x == curr.x && intersects[j].y == curr.y) {
-            found = true;
-            used[j] = true;
+            found = 1;
+            used[j] = 1;
             break;
           }
         }
@@ -339,7 +336,7 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
     if (dir != 0) {
       int k = Yidx;
 
-      while (true) {
+      while (1) {
         regPoints[regIdx++] = curr;
         if (regIdx == regCount) {
           regCount += 10;
@@ -352,11 +349,11 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
         k = (k + dir + xPolygonB.n) % xPolygonB.n;
 
         // X é o ponto que fecha um lado da região
-        bool found = false;
+        int found = 0;
         for (int j = 0; j < intersectsCount; j++) {
           if (intersects[j].x == curr.x && intersects[j].y == curr.y) {
-            found = true;
-            used[j] = true;
+            found = 1;
+            used[j] = 1;
             break;
           }
         }

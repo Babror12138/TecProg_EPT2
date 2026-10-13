@@ -1,8 +1,6 @@
 #include "test_utils.h"
 #include "general.h"
 
-#define EPS 1e-6
-
 static void testCreatPoint(void) {
     // teste com ponto qualquer
     Ponto p = create_point(1.5f, -2.0f);
@@ -34,5 +32,5 @@ static void testCreatSegment(void) {
 int main(void) {
     testCreatPoint();
     testCreatSegment();
-    return test_report("general");
+    return testReport("general");
 }

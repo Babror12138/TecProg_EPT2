@@ -43,7 +43,7 @@ static inline void checkNear(double obtido, double esperado, double eps, const c
  * @param modulo nome do módulo em questão
  * @return 0 se todos testes passaram e 1 se houve alguma falha
  */
-static inline int test_report(const char* modulo) {
+static inline int testReport(const char* modulo) {
 	printf("[%s] %d/%d testes passaram -> %s\n", modulo, tests_run - tests_failed, tests_run, tests_failed == 0 ? "OK" : "FALHA");
 	return tests_failed == 0 ? 0 : 1;
 }

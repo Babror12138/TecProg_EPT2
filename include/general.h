@@ -1,6 +1,9 @@
 #ifndef GENERAL_H
 #define GENERAL_H
 
+// erro de tolerância para pontos flutuantes
+#define EPS 1e-6f
+
 /**
  * @brief Cria estrutura ponto, com as coordenadas em (x, y)
  */
