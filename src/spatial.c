@@ -226,7 +226,7 @@ static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* inte
   // procura o indice de start
   int startIndex = 0;
   for (int j = 0; j < xA.n; j++) {
-    if (xA.vertices[j].x == start.x && xA.vertices[j].y == start.y) {
+    if (fabs(xA.vertices[j].x - start.x) < EPS && fabs(xA.vertices[j].y - start.y) < EPS) {
       startIndex = j;
       break;
     }
@@ -263,7 +263,7 @@ static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* inte
     // verifica se curr é ponto de interseção
     int found = -1;
     for (int j = 0; j < intersectsCount; j++) {
-      if (intersects[j].x == curr.x && intersects[j].y == curr.y) {
+      if (fabs(intersects[j].x - curr.x) < EPS && fabs(intersects[j].y - curr.y) < EPS) {
         found = j;
         break;
       }
