@@ -25,7 +25,6 @@ Poligono create_polygon(int n, const Ponto *vertices);
 /**
  * @brief Liberação da memória usada pelos vértices de um polígono.
  * @param poligono Ponteiro para o polígono a ser liberado.
- * @pre poligono != NULL.
  * @post poligono->vertices == NULL.
  * @post poligono->n == 0.
  */

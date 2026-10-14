@@ -1,6 +1,9 @@
 #ifndef GENERAL_H
 #define GENERAL_H
 
+#include <math.h>
+#include <stdlib.h>
+
 // erro de tolerância para pontos flutuantes
 #define GEOM_EPS 1e-6
 
@@ -22,8 +25,8 @@ typedef struct {
 
 /**
  * @brief Criação de um ponto, a partir das suas coordenadas x e y
- * @param Px A coordenada em x do ponto
- * @param Py A coordenada em y do ponto
+ * @param x A coordenada em x do ponto
+ * @param y A coordenada em y do ponto
  * @post Em sucesso, retorna uma estrutura Ponto com as coordeadas x e y
  * @return Estrutura Ponto p
  */
@@ -31,8 +34,8 @@ Ponto create_point(double x, double y);
 
 /**
  * @brief Criação de um segmento de reta, a partir das coordenadas dos dois pontos geradores
- * @param point1 O primeiro ponto gerador, a partir do struct Ponto criado anteriormente
- * @param point2 O segundo ponto gerador, a partir do struct Ponto criado anteriormente
+ * @param p1 O primeiro ponto gerador, a partir do struct Ponto criado anteriormente
+ * @param p2 O segundo ponto gerador, a partir do struct Ponto criado anteriormente
  * @post Em sucesso, retorna uma estrutura Segmento, que representa um segmento de reta formado por dois pontos lidos na entrada
  * @return Estrutura Segmento SR
  */

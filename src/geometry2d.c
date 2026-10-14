@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <math.h>
 #include "general.h"
 #include "geometry2d.h"
 

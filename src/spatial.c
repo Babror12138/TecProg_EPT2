@@ -1,9 +1,7 @@
 #include "spatial.h"
 #include "geometry2d.h"
-#include <math.h>
-#include <stdlib.h>
 
-Ponto* closest_pair(Ponto* pontos, int n) {
+Ponto* closest_pair(int n, const Ponto* pontos) {
   if (pontos == NULL || n < 2) {
     return NULL;
   }

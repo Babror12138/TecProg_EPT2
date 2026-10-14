@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "general.h"
 
 Ponto create_point(double Px, double Py){

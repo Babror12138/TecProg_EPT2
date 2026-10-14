@@ -6,12 +6,12 @@
 
 /**
  * @brief Encontra o par de pontos mais próximo entre si em um conjunto. Em caso de empate qualquer par é retornado.
- * @param pontos Lista de pontos
  * @param n Tamanho da lista de pontos
+ * @param pontos Lista de pontos
  * @return Vetor alocado com os dois pontos mais próximos, o chamados deve liberar com free()
  * @return NULL se pontos == NULL, se n < 2 ou se faltar memória
  */
-Ponto* closest_pair(Ponto* pontos, int n);
+Ponto* closest_pair(int n, const Ponto* pontos);
 
 /**
  * @brief Encontra os pontos de interseção entre dois polígonos
