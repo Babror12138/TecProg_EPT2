@@ -23,8 +23,8 @@ static int fecho_igual(const Poligono *fecho, const Ponto *esperado, int n) {
     if (fecho->n != n) return 0;
 
     for (int i = 0; i < n; i++) {
-        if (fabs(fecho->vertices[i].x - esperado[i].x) > EPS) return 0;
-        if (fabs(fecho->vertices[i].y - esperado[i].y) > EPS) return 0;
+        if (fabs(fecho->vertices[i].x - esperado[i].x) > GEOM_EPS) return 0;
+        if (fabs(fecho->vertices[i].y - esperado[i].y) > GEOM_EPS) return 0;
     }
 
     return 1;
@@ -77,33 +77,33 @@ static void test_graham_igual_jarvis(void) {
 }
 
 static void test_area(void) {
-    ASSERT_NEAR(convex_hull_area(TAM(QUADRADO), QUADRADO), 16.0, EPS);
-    ASSERT_NEAR(convex_hull_area(TAM(TRIANGULO), TRIANGULO), 6.0, EPS);
+    ASSERT_NEAR(convex_hull_area(TAM(QUADRADO), QUADRADO), 16.0, GEOM_EPS);
+    ASSERT_NEAR(convex_hull_area(TAM(TRIANGULO), TRIANGULO), 6.0, GEOM_EPS);
 
     // entradas inválidas
-    ASSERT_NEAR(convex_hull_area(5, NULL), 0.0, EPS);
-    ASSERT_NEAR(convex_hull_area(TAM(COLINEARES), COLINEARES), 0.0, EPS);
+    ASSERT_NEAR(convex_hull_area(5, NULL), 0.0, GEOM_EPS);
+    ASSERT_NEAR(convex_hull_area(TAM(COLINEARES), COLINEARES), 0.0, GEOM_EPS);
 }
 
 static void test_perimetro(void) {
-    ASSERT_NEAR(convex_hull_perimeter(TAM(QUADRADO), QUADRADO), 16.0, EPS);
-    ASSERT_NEAR(convex_hull_perimeter(TAM(TRIANGULO), TRIANGULO), 12.0, EPS);
+    ASSERT_NEAR(convex_hull_perimeter(TAM(QUADRADO), QUADRADO), 16.0, GEOM_EPS);
+    ASSERT_NEAR(convex_hull_perimeter(TAM(TRIANGULO), TRIANGULO), 12.0, GEOM_EPS);
 
     // entradas inválidas
-    ASSERT_NEAR(convex_hull_perimeter(5, NULL), 0.0, EPS);
-    ASSERT_NEAR(convex_hull_perimeter(TAM(COLINEARES), COLINEARES), 0.0, EPS);
+    ASSERT_NEAR(convex_hull_perimeter(5, NULL), 0.0, GEOM_EPS);
+    ASSERT_NEAR(convex_hull_perimeter(TAM(COLINEARES), COLINEARES), 0.0, GEOM_EPS);
 }
 
 static void test_diametro(void) {
     // testa se o diâmetro é o que deveria ser
-    ASSERT_NEAR(convex_hull_diameter(TAM(QUADRADO), QUADRADO), 4.0 * sqrt(2.0), EPS);
-    ASSERT_NEAR(convex_hull_diameter(TAM(TRIANGULO), TRIANGULO), 5.0, EPS);
+    ASSERT_NEAR(convex_hull_diameter(TAM(QUADRADO), QUADRADO), 4.0 * sqrt(2.0), GEOM_EPS);
+    ASSERT_NEAR(convex_hull_diameter(TAM(TRIANGULO), TRIANGULO), 5.0, GEOM_EPS);
 
     // entradas inválidas: diâmetro deve retornar 0
     Ponto dois_pontos[] = { {0, 0}, {3, 4} };
-    ASSERT_NEAR(convex_hull_diameter(5, NULL), 0.0, EPS);
-    ASSERT_NEAR(convex_hull_diameter(2, dois_pontos), 0.0, EPS);
-    ASSERT_NEAR(convex_hull_diameter(TAM(COLINEARES), COLINEARES), 0.0, EPS);
+    ASSERT_NEAR(convex_hull_diameter(5, NULL), 0.0, GEOM_EPS);
+    ASSERT_NEAR(convex_hull_diameter(2, dois_pontos), 0.0, GEOM_EPS);
+    ASSERT_NEAR(convex_hull_diameter(TAM(COLINEARES), COLINEARES), 0.0, GEOM_EPS);
 }
 
 int main(void) {

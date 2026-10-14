@@ -3,13 +3,19 @@
 #include "general.h"
 #include "geometry2d.h"
 
-int point_on_segment(Segmento *SR, Ponto *p) {
+static int is_degenerate(const Segmento *SR) {
+	return fabs(SR->p1.x - SR->p2.x) < GEOM_EPS && fabs(SR->p1.y - SR->p2.y) < GEOM_EPS;
+}
+
+int point_on_segment(const Segmento *SR, const Ponto *p) {
+	if (SR == NULL || p == NULL) return 0;
+
 	// Identificar se o ponto p está dentro do escopo definido pelos dois pontos do segmento
 	double minx = fmin(SR->p1.x, SR->p2.x), maxx = fmax(SR->p1.x, SR->p2.x);
 	double miny = fmin(SR->p1.y, SR->p2.y), maxy = fmax(SR->p1.y, SR->p2.y);
 	
-	if(p->x < minx - EPS || p->x > maxx + EPS) return 0;
-	if(p->y < miny - EPS || p->y > maxy + EPS) return 0;
+	if(p->x < minx - GEOM_EPS || p->x > maxx + GEOM_EPS) return 0;
+	if(p->y < miny - GEOM_EPS || p->y > maxy + GEOM_EPS) return 0;
 	
 	// Os dois elementos do vetor formado pelos dois pontos do segmento
 	double x = SR->p1.x - SR->p2.x;
@@ -20,18 +26,21 @@ int point_on_segment(Segmento *SR, Ponto *p) {
 	double u = p->x - SR->p1.x;
 	double v = p->y - SR->p1.y;
 	
-	if(fabs(x*v - y*u) > EPS) return 0;
+	if(fabs(x*v - y*u) > GEOM_EPS) return 0;
 	
 	return 1;
 }
 
-double point_distance(Ponto *p1, Ponto *p2) {
+double point_distance(const Ponto *p1, const Ponto *p2) {
+	if (p1 == NULL || p2 == NULL) return -1.0;
+
 	// Aplicação da fórmula da distância entre pontos
 	double dist = (p1->x - p2->x)*(p1->x - p2->x) + (p1->y - p2->y)*(p1->y - p2->y);
 	return sqrt(dist);
 }
 
-double point_line_distance(Segmento *SR, Ponto *p) {
+double point_line_distance(const Segmento *SR, const Ponto *p) {
+	if (SR == NULL || p == NULL || is_degenerate(SR)) return -1.0;
 	// Definição dos coeficientes da equação da reta definda pelo segmento de reta SR
 	double a = SR->p2.y - SR->p1.y;
 	double b = -1*(SR->p2.x - SR->p1.x);
@@ -44,7 +53,10 @@ double point_line_distance(Segmento *SR, Ponto *p) {
 	return sup / sqrt((a*a) + (b*b));
 }
 
-Ponto line_intersection(Segmento *SR1, Segmento *SR2) {
+Ponto line_intersection(const Segmento *SR1, const Segmento *SR2) {
+	int posicao = lines_position(SR1, SR2);
+	if (posicao == INVALIDO || posicao == PARALELOS) return create_point(NAN, NAN);
+
 	double a1 = SR1->p2.y - SR1->p1.y;
 	double b1 = -(SR1->p2.x - SR1->p1.x);
 	double c1 = -SR1->p1.y * (SR1->p2.x - SR1->p1.x) + SR1->p1.x * (SR1->p2.y - SR1->p1.y);
@@ -64,7 +76,9 @@ Ponto line_intersection(Segmento *SR1, Segmento *SR2) {
 }
 
 
-int lines_position(Segmento *SR1, Segmento *SR2) {
+int lines_position(const Segmento *SR1, const Segmento *SR2) {
+	if (SR1 == NULL || SR2 == NULL || is_degenerate(SR1) || is_degenerate(SR2)) return INVALIDO;
+
 	// Define o vetor que define a reta formada pelo segmento de reta SR1
 	double x1 = SR1->p1.x - SR1->p2.x;
 	double y1 = SR1->p1.y - SR1->p2.y;
@@ -74,7 +88,7 @@ int lines_position(Segmento *SR1, Segmento *SR2) {
 	double y2 = SR2->p1.y - SR2->p2.y;
 
 	// Comparação entre os vetores
-	if(fabs(x1*y2 - x2*y1) < EPS) return PARALELOS;
-	if(fabs(x1*x2 + y1*y2) < EPS) return PERPENDICULARES;
+	if(fabs(x1*y2 - x2*y1) < GEOM_EPS) return PARALELOS;
+	if(fabs(x1*x2 + y1*y2) < GEOM_EPS) return PERPENDICULARES;
 	else return CONCORRENTES;
 }

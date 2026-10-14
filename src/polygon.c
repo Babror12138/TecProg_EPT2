@@ -92,7 +92,7 @@ Ponto polygon_centroid(const Poligono *poligono) {
 	double Cy = 0;
 	double A = signed_area(poligono);
 
-	if (fabs(A) < EPS) {
+	if (fabs(A) < GEOM_EPS) {
 		return centroid;
 	}
 
@@ -127,7 +127,7 @@ int is_convex(const Poligono *poligono) {
 		double cross = (p2.x - p1.x) * (p3.y - p2.y) - (p2.y - p1.y) * (p3.x - p2.x);
 
 		// fix: se os pontos forem colineares, segue para o próximo, sem mudar a orientação
-		if (fabs(cross) < EPS) continue;
+		if (fabs(cross) < GEOM_EPS) continue;
 
 		if (orientation == 0) {
 			if (cross > 0) {
@@ -145,8 +145,8 @@ int is_convex(const Poligono *poligono) {
 	return 1;
 }
 
-int polygon_contains_point(const Poligono *poligono, Ponto *ponto) {
-	if (poligono == NULL || poligono->vertices == NULL || poligono->n < 3) {
+int polygon_contains_point(const Poligono *poligono, const Ponto *ponto) {
+	if (poligono == NULL || poligono->vertices == NULL || poligono->n < 3 || ponto == NULL) {
 		return 0;
 	}
 

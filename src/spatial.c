@@ -42,7 +42,9 @@ Ponto* closest_pair(Ponto* pontos, int n) {
 // encontro o pontode interseção aos dois segmentos dados se existir
 static int find_intersection_point(Segmento segA, Segmento segB, Ponto* intersection_point) {
   if (intersection_point == NULL) return 0;
-  if (lines_position(&segA, &segB) == PARALELOS) return 0;
+
+  int position = lines_position(&segA, &segB);
+  if (position == INVALIDO || position == PARALELOS) return 0;
 
   Ponto point = line_intersection(&segA, &segB);
 
@@ -57,8 +59,8 @@ static int find_intersection_point(Segmento segA, Segmento segB, Ponto* intersec
 static int contains_point(Ponto point, const Ponto *points, int size) {
   for (int i = 0; i < size; i++) {
     if (
-      fabs(points[i].x - point.x) <= EPS &&
-      fabs(points[i].y - point.y) <= EPS
+      fabs(points[i].x - point.x) <= GEOM_EPS &&
+      fabs(points[i].y - point.y) <= GEOM_EPS
     ) {
       return 0;
     }
@@ -88,10 +90,19 @@ static void* resize_increment_array(void* p, int* size, int byte, int increment)
   return temp;
 }
 
+static int is_valid_polygon(Poligono P) {
+  return P.vertices != NULL && P.n >= 3;
+}
+
 Ponto* intersection_polygon(Poligono A, Poligono B, int *length) {
   int n = 10;
   int k = 0; // indice para o vetor dos pontos de interseção
+
+  if (length == NULL) return NULL;
   *length = 0;
+
+  if (!is_valid_polygon(A) || !is_valid_polygon(B)) return NULL;
+  
   
   Ponto* intersects = (Ponto*) malloc(n * sizeof(Ponto));
   if (intersects == NULL) return NULL;
@@ -125,7 +136,7 @@ Ponto* intersection_polygon(Poligono A, Poligono B, int *length) {
   }
 
   // garante que o vetor final tenha o tamanho correto
-  intersects = resize_array(intersects, n, sizeof(Ponto));
+  intersects = resize_array(intersects, k, sizeof(Ponto));
   if (intersects == NULL) return NULL;
 
   *length = k;
@@ -163,7 +174,13 @@ static int add_intersection_points(Poligono A, Poligono B, Poligono* xA) {
       int is_intersection = find_intersection_point(segA, segB, &intersectionPoint);
       if (!is_intersection) continue;
 
-      if (!contains_point(intersectionPoint, intersects, k)) continue;
+      // os extremos da aresta já entram em xPolygonA como vértices de A
+      if (
+        (fabs(intersectionPoint.x - segA.p1.x) < GEOM_EPS && fabs(intersectionPoint.y - segA.p1.y) < GEOM_EPS) ||
+        (fabs(intersectionPoint.x - segA.p2.x) < GEOM_EPS && fabs(intersectionPoint.y - segA.p2.y) < GEOM_EPS)
+      ) continue;
+
+      if (!contains_point(intersectionPoint, intersects, l)) continue;
 
       intersects[l++] = intersectionPoint;
 
@@ -202,11 +219,14 @@ static int add_intersection_points(Poligono A, Poligono B, Poligono* xA) {
   }
 
   *xA = create_polygon(k, xPolygonA);
+  free(xPolygonA);
   return 1;
 }
 
 // verifica se um poligono A está totalmente contido no poligono B
 int is_polygon_inside(Poligono A, Poligono B) {
+  if (!is_valid_polygon(A) || !is_valid_polygon(B)) return 0;
+
   // verifica se todos os pontos de A estão dentro de B
   for (int i = 0; i < A.n; i++) {
     if (!polygon_contains_point(&B, &A.vertices[i])) {
@@ -221,32 +241,39 @@ int is_polygon_inside(Poligono A, Poligono B) {
 static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* intersects, int intersectsCount, int* end, int* pathSize) {
   int pathCount = 20;
   int pathIdx = 0;
-  Ponto* pathPoints = (Ponto*) malloc(pathCount * sizeof(Ponto));
 
   // procura o indice de start
   int startIndex = 0;
   for (int j = 0; j < xA.n; j++) {
-    if (xA.vertices[j].x == start.x && xA.vertices[j].y == start.y) {
+    if (fabs(xA.vertices[j].x - start.x) < GEOM_EPS && fabs(xA.vertices[j].y - start.y) < GEOM_EPS) {
       startIndex = j;
       break;
     }
   }
 
+  Ponto next = xA.vertices[(startIndex + 1) % xA.n];
+  Ponto prev = xA.vertices[(startIndex - 1 + xA.n) % xA.n];
+  Ponto midNext = create_point((start.x + next.x) / 2, (start.y + next.y) / 2);
+  Ponto midPrev = create_point((start.x + prev.x) / 2, (start.y + prev.y) / 2);
+
   // define a direção de busca
   int dir = 0;
-  if (polygon_contains_point(&B, &xA.vertices[(startIndex + 1) % xA.n])) {
+  if (polygon_contains_point(&B, &midNext)) {
     dir = 1;
   }
-  if (polygon_contains_point(&B, &xA.vertices[(startIndex - 1 + xA.n) % xA.n])) {
+  if (polygon_contains_point(&B, &midPrev)) {
     dir = -1;
   }
 
   if (dir == 0) return NULL;
 
+  Ponto* pathPoints = (Ponto*) malloc(pathCount * sizeof(Ponto));
+  if (pathPoints == NULL) return NULL;
+
   Ponto curr = start;
   int k = startIndex; // indice nos pontos de xA
 
-  while (1) {
+  for (int i = 0; i < xA.n; i++) {
     // adiciona o ponto atual no caminho
     pathPoints[pathIdx++] = curr;
 
@@ -263,7 +290,7 @@ static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* inte
     // verifica se curr é ponto de interseção
     int found = -1;
     for (int j = 0; j < intersectsCount; j++) {
-      if (intersects[j].x == curr.x && intersects[j].y == curr.y) {
+      if (fabs(intersects[j].x - curr.x) < GEOM_EPS && fabs(intersects[j].y - curr.y) < GEOM_EPS) {
         found = j;
         break;
       }
@@ -282,7 +309,11 @@ static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* inte
 }
 
 Poligono* intersection_region(Poligono A, Poligono B, int* length) {
+
+  if (length == NULL) return NULL;
   *length = 0;
+
+  if (!is_valid_polygon(A) || !is_valid_polygon(B)) return NULL;
 
   // se algum poligono está contido no outro, então o poligono de interseção é o contido
   if (is_polygon_inside(A, B)) {
@@ -311,10 +342,17 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
 
   // adiciona as interseções aos poligonos, preservando a ordem dos pontos
   Poligono xPolygonA;
-  if (!add_intersection_points(A, B, &xPolygonA)) return NULL;
+  if (!add_intersection_points(A, B, &xPolygonA)) {
+    free(intersects);
+    return NULL;
+  }
 
   Poligono xPolygonB;
-  if (!add_intersection_points(B, A, &xPolygonB)) return NULL;
+  if (!add_intersection_points(B, A, &xPolygonB)) {
+    free(intersects);
+    free_polygon(&xPolygonA);
+    return NULL;
+  }
 
   // diz se o i-ésimo ponto de interseção já foi utlizado
   int* used = (int*) calloc(intersectsCount, sizeof(int));
@@ -322,31 +360,84 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
   int regionsIdx = 0;
   Poligono* regions = (Poligono*) malloc(regionsCount * sizeof(Poligono));
 
+  if (used == NULL || regions == NULL) {
+    free(used);
+    free(regions);
+    free(intersects);
+    free_polygon(&xPolygonA);
+    free_polygon(&xPolygonB);
+    return NULL;
+  }
+
   for (int i = 0; i < intersectsCount; i++) {
     if (used[i]) continue;
-
-    int indexEnd;
-    int pathCount1 = 0;
-    Ponto* pathPoints1 = find_points_path(intersects[i], xPolygonA, B, intersects, intersectsCount, &indexEnd, &pathCount1);
-
-    int _;
-    int pathCount2 = 0;
-    Ponto* pathPoints2 = find_points_path(intersects[indexEnd], xPolygonB, A, intersects, intersectsCount, &_, &pathCount2);
-
-    // marca que utilizamos estes pontos de interseção
     used[i] = 1;
-    used[indexEnd] = 1;
 
-    Ponto regPoints[pathCount1 + pathCount2];
-    for (int j = 0; j < pathCount1; j++) regPoints[j] = pathPoints1[j];
-    for (int j = 0; j < pathCount2; j++) regPoints[pathCount1 + j] = pathPoints2[j];
+    int regCount = 0;
+    int regCapacity = 20;
+    Ponto* regPoints = (Ponto*) malloc(regCapacity * sizeof(Ponto));
+    if (regPoints == NULL) break;
 
-    Poligono region = create_polygon(pathCount1 + pathCount2, regPoints);
+    // contorna a região alternando entre os dois polígonos a cada ponto de
+    // interseção, até voltar ao ponto de partida
+    int current = i;
+    int inA = 1;
+    int closed = 0;
+
+    for (int leg = 0; leg < intersectsCount && regPoints != NULL; leg++) {
+      int next = -1;
+      int pathCount = 0;
+      Ponto* path = inA
+        ? find_points_path(intersects[current], xPolygonA, B, intersects, intersectsCount, &next, &pathCount)
+        : find_points_path(intersects[current], xPolygonB, A, intersects, intersectsCount, &next, &pathCount);
+
+      if (path == NULL) break;
+
+      // acrescenta o trecho ao contorno da região
+      for (int j = 0; j < pathCount && regPoints != NULL; j++) {
+        regPoints[regCount++] = path[j];
+        if (regCount == regCapacity) {
+          regPoints = resize_increment_array(regPoints, &regCapacity, sizeof(Ponto), 20);
+        }
+      }
+
+      free(path);
+      if (regPoints == NULL) break;
+
+      used[next] = 1;
+      current = next;
+      inA = !inA;
+
+      if (current == i) {
+        closed = 1;
+        break;
+      }
+    }
+
+    if (regPoints == NULL) break;
+
+    // pontos em que os polígonos apenas se tocam não fecham uma região
+    Poligono region = create_polygon(closed ? regCount : 0, regPoints);
+    free(regPoints);
+    if (region.n == 0) continue;
+
     regions[regionsIdx++] = region;
     if (regionsIdx == regionsCount) {
       regions = resize_increment_array(regions, &regionsCount, sizeof(Poligono), 10);
-      if (regions == NULL) return NULL;
+      if (regions == NULL) break;
     }
+  }
+
+  free(intersects);
+  free(used);
+  free_polygon(&xPolygonA);
+  free_polygon(&xPolygonB);
+
+  if (regions == NULL) return NULL;
+
+  if (regionsIdx == 0) {
+    free(regions);
+    return NULL;
   }
 
   regions = resize_array(regions, regionsIdx, sizeof(Poligono));

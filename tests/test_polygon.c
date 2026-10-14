@@ -21,15 +21,15 @@ static void test_create_polygon(void) {
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
     ASSERT_TRUE(p.n == 4);
     ASSERT_TRUE(p.vertices != NULL);
-    ASSERT_NEAR(p.vertices[2].x, 4.0, EPS);
-    ASSERT_NEAR(p.vertices[2].y, 4.0, EPS);
+    ASSERT_NEAR(p.vertices[2].x, 4.0, GEOM_EPS);
+    ASSERT_NEAR(p.vertices[2].y, 4.0, GEOM_EPS);
     free_polygon(&p);
 
     // testa se o polígono guarda uma cópia dos vértices
     Ponto vertices[] = { {0, 0}, {4, 0}, {0, 3} };
     p = create_polygon(3, vertices);
     vertices[0].x = 99;
-    ASSERT_NEAR(p.vertices[0].x, 0.0, EPS);
+    ASSERT_NEAR(p.vertices[0].x, 0.0, GEOM_EPS);
     free_polygon(&p);
 
     // testa menos de 3 vértices
@@ -57,78 +57,78 @@ static void test_free_polygon(void) {
 static void test_signed_area(void) {
     // sentido anti-horário dá área positiva
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
-    ASSERT_NEAR(signed_area(&p), 16.0, EPS);
+    ASSERT_NEAR(signed_area(&p), 16.0, GEOM_EPS);
     free_polygon(&p);
 
     // sentido horário dá área negativa
     p = create_polygon(TAM(QUADRADO_HORARIO), QUADRADO_HORARIO);
-    ASSERT_NEAR(signed_area(&p), -16.0, EPS);
+    ASSERT_NEAR(signed_area(&p), -16.0, GEOM_EPS);
     free_polygon(&p);
 
     // testa entrada inválida
-    ASSERT_NEAR(signed_area(NULL), 0.0, EPS);
+    ASSERT_NEAR(signed_area(NULL), 0.0, GEOM_EPS);
 }
 
 static void test_polygon_area(void) {
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
-    ASSERT_NEAR(polygon_area(&p), 16.0, EPS);
+    ASSERT_NEAR(polygon_area(&p), 16.0, GEOM_EPS);
     free_polygon(&p);
 
     // testa que a área não depende da ordem dos vértices
     p = create_polygon(TAM(QUADRADO_HORARIO), QUADRADO_HORARIO);
-    ASSERT_NEAR(polygon_area(&p), 16.0, EPS);
+    ASSERT_NEAR(polygon_area(&p), 16.0, GEOM_EPS);
     free_polygon(&p);
 
     p = create_polygon(TAM(TRIANGULO), TRIANGULO);
-    ASSERT_NEAR(polygon_area(&p), 6.0, EPS);
+    ASSERT_NEAR(polygon_area(&p), 6.0, GEOM_EPS);
     free_polygon(&p);
 
     // testa entradas inválidas (polígono nulo e polígono vazio)
-    ASSERT_NEAR(polygon_area(NULL), 0.0, EPS);
+    ASSERT_NEAR(polygon_area(NULL), 0.0, GEOM_EPS);
     p = create_polygon(2, QUADRADO);
-    ASSERT_NEAR(polygon_area(&p), 0.0, EPS);
+    ASSERT_NEAR(polygon_area(&p), 0.0, GEOM_EPS);
 }
 
 static void test_polygon_perimeter(void) {
     // testa perímetro do quadrado
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
-    ASSERT_NEAR(polygon_perimeter(&p), 16.0, EPS);
+    ASSERT_NEAR(polygon_perimeter(&p), 16.0, GEOM_EPS);
     free_polygon(&p);
 
     // testa perímetro do triângulo 3-4-5
     p = create_polygon(TAM(TRIANGULO), TRIANGULO);
-    ASSERT_NEAR(polygon_perimeter(&p), 12.0, EPS);
+    ASSERT_NEAR(polygon_perimeter(&p), 12.0, GEOM_EPS);
     free_polygon(&p);
 
     // testa entrada inválida
-    ASSERT_NEAR(polygon_perimeter(NULL), 0.0, EPS);
+    ASSERT_NEAR(polygon_perimeter(NULL), 0.0, GEOM_EPS);
 }
 
 static void test_polygon_centroid(void) {
     Poligono p = create_polygon(TAM(QUADRADO), QUADRADO);
     Ponto c = polygon_centroid(&p);
-    ASSERT_NEAR(c.x, 2.0, EPS);
-    ASSERT_NEAR(c.y, 2.0, EPS);
+    ASSERT_NEAR(c.x, 2.0, GEOM_EPS);
+    ASSERT_NEAR(c.y, 2.0, GEOM_EPS);
     free_polygon(&p);
 
     // testa que o centróide não depende da ordem dos vértices
     p = create_polygon(TAM(QUADRADO_HORARIO), QUADRADO_HORARIO);
     c = polygon_centroid(&p);
-    ASSERT_NEAR(c.x, 2.0, EPS);
-    ASSERT_NEAR(c.y, 2.0, EPS);
+    ASSERT_NEAR(c.x, 2.0, GEOM_EPS);
+    ASSERT_NEAR(c.y, 2.0, GEOM_EPS);
     free_polygon(&p);
 
     // o centroide do triângulo é a média dos vértices
     p = create_polygon(TAM(TRIANGULO), TRIANGULO);
     c = polygon_centroid(&p);
-    ASSERT_NEAR(c.x, 4.0 / 3.0, EPS);
-    ASSERT_NEAR(c.y, 1.0, EPS);
+    ASSERT_NEAR(c.x, 4.0 / 3.0, GEOM_EPS);
+    ASSERT_NEAR(c.y, 1.0, GEOM_EPS);
     free_polygon(&p);
 
     // testa entrada inválida
     c = polygon_centroid(NULL);
-    ASSERT_NEAR(c.x, 0.0, EPS);
-    ASSERT_NEAR(c.y, 0.0, EPS);
+    ASSERT_NEAR(c.x, 0.0, GEOM_EPS);
+    ASSERT_NEAR(c.y, 0.0, GEOM_EPS);
 }
 
 static void test_is_convex(void) {
@@ -186,6 +186,7 @@ static void test_polygon_contains_point(void) {
 
     // testa entrada inválida
     ASSERT_TRUE(polygon_contains_point(NULL, &dentro) == 0);
+    ASSERT_TRUE(polygon_contains_point(&p, NULL) == 0);
 }
 
 int main(void) {
