@@ -85,12 +85,12 @@ run: run-static run-shared
 # Roda programa do cliente com linking estático estática
 run-static: $(APP_STATIC)
 	@echo "Rodando programa cliente com linking estático"
-	@./$<
+	@./$< $(BIN_DIR)/demo_static.svg
 
 # Roda programa do cliente com linking dinâmico
 run-shared: $(APP_SHARED)
 	@echo "Rodando programa cliente com linking dinâmico"
-	@./$<
+	@./$< $(BIN_DIR)/demo_shared.svg
 
 # Regra para compilar os objetos dos testes
 $(BUILD_DIR)/tests/%.o: $(TEST_DIR)/%.c
