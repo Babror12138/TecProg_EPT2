@@ -4,7 +4,7 @@
 #include "geometry2d.h"
 
 static int is_degenerate(const Segmento *SR) {
-	return fabs(SR->p1.x - SR->p2.x) < EPS && fabs(SR->p1.y - SR->p2.y) < EPS;
+	return fabs(SR->p1.x - SR->p2.x) < GEOM_EPS && fabs(SR->p1.y - SR->p2.y) < GEOM_EPS;
 }
 
 int point_on_segment(const Segmento *SR, const Ponto *p) {
@@ -14,8 +14,8 @@ int point_on_segment(const Segmento *SR, const Ponto *p) {
 	double minx = fmin(SR->p1.x, SR->p2.x), maxx = fmax(SR->p1.x, SR->p2.x);
 	double miny = fmin(SR->p1.y, SR->p2.y), maxy = fmax(SR->p1.y, SR->p2.y);
 	
-	if(p->x < minx - EPS || p->x > maxx + EPS) return 0;
-	if(p->y < miny - EPS || p->y > maxy + EPS) return 0;
+	if(p->x < minx - GEOM_EPS || p->x > maxx + GEOM_EPS) return 0;
+	if(p->y < miny - GEOM_EPS || p->y > maxy + GEOM_EPS) return 0;
 	
 	// Os dois elementos do vetor formado pelos dois pontos do segmento
 	double x = SR->p1.x - SR->p2.x;
@@ -26,7 +26,7 @@ int point_on_segment(const Segmento *SR, const Ponto *p) {
 	double u = p->x - SR->p1.x;
 	double v = p->y - SR->p1.y;
 	
-	if(fabs(x*v - y*u) > EPS) return 0;
+	if(fabs(x*v - y*u) > GEOM_EPS) return 0;
 	
 	return 1;
 }
@@ -88,7 +88,7 @@ int lines_position(const Segmento *SR1, const Segmento *SR2) {
 	double y2 = SR2->p1.y - SR2->p2.y;
 
 	// Comparação entre os vetores
-	if(fabs(x1*y2 - x2*y1) < EPS) return PARALELOS;
-	if(fabs(x1*x2 + y1*y2) < EPS) return PERPENDICULARES;
+	if(fabs(x1*y2 - x2*y1) < GEOM_EPS) return PARALELOS;
+	if(fabs(x1*x2 + y1*y2) < GEOM_EPS) return PERPENDICULARES;
 	else return CONCORRENTES;
 }

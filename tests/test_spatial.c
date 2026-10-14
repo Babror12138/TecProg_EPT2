@@ -19,7 +19,7 @@ static const Ponto QUADRADO_LONGE[] = { {10, 10}, {12, 10}, {12, 12}, {10, 12} }
 // função utilidade que retorna 1 se o ponto (x, y) está no vetor
 static int contemPonto(const Ponto *pontos, int n, double x, double y) {
     for (int i = 0; i < n; i++) {
-        if (fabs(pontos[i].x - x) <= EPS && fabs(pontos[i].y - y) <= EPS) return 1;
+        if (fabs(pontos[i].x - x) <= GEOM_EPS && fabs(pontos[i].y - y) <= GEOM_EPS) return 1;
     }
     return 0;
 }
@@ -44,8 +44,8 @@ static void test_closest_pair(void) {
     Ponto repetidos[] = { {3, 3}, {7, 1}, {3, 3} };
     par = closest_pair(repetidos, TAM(repetidos));
     ASSERT_TRUE(par != NULL);
-    ASSERT_NEAR(par[0].x, par[1].x, EPS);
-    ASSERT_NEAR(par[0].y, par[1].y, EPS);
+    ASSERT_NEAR(par[0].x, par[1].x, GEOM_EPS);
+    ASSERT_NEAR(par[0].y, par[1].y, GEOM_EPS);
     free(par);
 
     // testa entradas inválidas
@@ -78,6 +78,13 @@ static void test_intersection_polygon(void) {
     ASSERT_TRUE(pontos == NULL);
     ASSERT_TRUE(n == 0);
 
+    // testa com polígono vazio
+    Poligono vazio = create_polygon(0, NULL);
+    n = -1;
+    ASSERT_TRUE(intersection_polygon(vazio, a, &n) == NULL);
+    ASSERT_TRUE(n == 0);
+    ASSERT_TRUE(intersection_polygon(a, b, NULL) == NULL);
+
     free_polygon(&a);
     free_polygon(&b);
     free_polygon(&dentro);
@@ -103,6 +110,11 @@ static void test_is_polygon_inside(void) {
     ASSERT_TRUE(is_polygon_inside(a, b) == 0);
     ASSERT_TRUE(is_polygon_inside(a, longe) == 0);
 
+    // testa polígono inválido
+    Poligono vazio = create_polygon(0, NULL);
+    ASSERT_TRUE(is_polygon_inside(vazio, a) == 0);
+    ASSERT_TRUE(is_polygon_inside(a, vazio) == 0);
+
     free_polygon(&a);
     free_polygon(&b);
     free_polygon(&dentro);
@@ -121,7 +133,7 @@ static void test_intersection_region(void) {
     ASSERT_TRUE(n == 1);
     ASSERT_TRUE(regioes != NULL);
     ASSERT_TRUE(regioes[0].n == 4);
-    ASSERT_NEAR(polygon_area(&regioes[0]), 4.0, EPS);
+    ASSERT_NEAR(polygon_area(&regioes[0]), 4.0, GEOM_EPS);
     free_polygon(&regioes[0]);
     free(regioes);
 
@@ -129,7 +141,7 @@ static void test_intersection_region(void) {
     regioes = intersection_region(dentro, a, &n);
     ASSERT_TRUE(n == 1);
     ASSERT_TRUE(regioes != NULL);
-    ASSERT_NEAR(polygon_area(&regioes[0]), 1.0, EPS);
+    ASSERT_NEAR(polygon_area(&regioes[0]), 1.0, GEOM_EPS);
     free_polygon(&regioes[0]);
     free(regioes);
 
@@ -137,7 +149,7 @@ static void test_intersection_region(void) {
     regioes = intersection_region(a, dentro, &n);
     ASSERT_TRUE(n == 1);
     ASSERT_TRUE(regioes != NULL);
-    ASSERT_NEAR(polygon_area(&regioes[0]), 1.0, EPS);
+    ASSERT_NEAR(polygon_area(&regioes[0]), 1.0, GEOM_EPS);
     free_polygon(&regioes[0]);
     free(regioes);
 
@@ -145,6 +157,13 @@ static void test_intersection_region(void) {
     regioes = intersection_region(a, longe, &n);
     ASSERT_TRUE(regioes == NULL);
     ASSERT_TRUE(n == 0);
+
+    // testa polígono inválido
+    Poligono vazio = create_polygon(0, NULL);
+    n = -1;
+    ASSERT_TRUE(intersection_region(vazio, a, &n) == NULL);
+    ASSERT_TRUE(n == 0);
+    ASSERT_TRUE(intersection_region(a, b, NULL) == NULL);
 
     free_polygon(&a);
     free_polygon(&b);
@@ -157,7 +176,7 @@ static void test_intersection_region(void) {
     ASSERT_TRUE(n == 1);
     ASSERT_TRUE(regioes != NULL);
     ASSERT_TRUE(regioes[0].n == 6);
-    ASSERT_NEAR(polygon_area(&regioes[0]), 12.0, EPS);
+    ASSERT_NEAR(polygon_area(&regioes[0]), 12.0, GEOM_EPS);
     free_polygon(&regioes[0]);
     free(regioes);
     free_polygon(&t1);

@@ -59,8 +59,8 @@ static int find_intersection_point(Segmento segA, Segmento segB, Ponto* intersec
 static int contains_point(Ponto point, const Ponto *points, int size) {
   for (int i = 0; i < size; i++) {
     if (
-      fabs(points[i].x - point.x) <= EPS &&
-      fabs(points[i].y - point.y) <= EPS
+      fabs(points[i].x - point.x) <= GEOM_EPS &&
+      fabs(points[i].y - point.y) <= GEOM_EPS
     ) {
       return 0;
     }
@@ -176,8 +176,8 @@ static int add_intersection_points(Poligono A, Poligono B, Poligono* xA) {
 
       // os extremos da aresta já entram em xPolygonA como vértices de A
       if (
-        (fabs(intersectionPoint.x - segA.p1.x) < EPS && fabs(intersectionPoint.y - segA.p1.y) < EPS) ||
-        (fabs(intersectionPoint.x - segA.p2.x) < EPS && fabs(intersectionPoint.y - segA.p2.y) < EPS)
+        (fabs(intersectionPoint.x - segA.p1.x) < GEOM_EPS && fabs(intersectionPoint.y - segA.p1.y) < GEOM_EPS) ||
+        (fabs(intersectionPoint.x - segA.p2.x) < GEOM_EPS && fabs(intersectionPoint.y - segA.p2.y) < GEOM_EPS)
       ) continue;
 
       if (!contains_point(intersectionPoint, intersects, l)) continue;
@@ -245,7 +245,7 @@ static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* inte
   // procura o indice de start
   int startIndex = 0;
   for (int j = 0; j < xA.n; j++) {
-    if (fabs(xA.vertices[j].x - start.x) < EPS && fabs(xA.vertices[j].y - start.y) < EPS) {
+    if (fabs(xA.vertices[j].x - start.x) < GEOM_EPS && fabs(xA.vertices[j].y - start.y) < GEOM_EPS) {
       startIndex = j;
       break;
     }
@@ -290,7 +290,7 @@ static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* inte
     // verifica se curr é ponto de interseção
     int found = -1;
     for (int j = 0; j < intersectsCount; j++) {
-      if (fabs(intersects[j].x - curr.x) < EPS && fabs(intersects[j].y - curr.y) < EPS) {
+      if (fabs(intersects[j].x - curr.x) < GEOM_EPS && fabs(intersects[j].y - curr.y) < GEOM_EPS) {
         found = j;
         break;
       }

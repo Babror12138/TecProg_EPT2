@@ -75,7 +75,7 @@ int is_convex(const Poligono *poligono);
  * @param poligono Ponteiro para o polígono a ser verificado.
  * @param ponto Ponteiro para o ponto a ser verificado.
  * @return 1 se o ponto estiver dentro do polígono ou sobre os lados; 0 se o ponto estiver fora do polígono ou
- * 		   se poligono for inválido ou NULL
+ * 		   se poligono for inválido ou NULL ou se ponto for NULL
  */
 int polygon_contains_point(const Poligono *poligono, const Ponto *ponto);
 

@@ -1,5 +1,5 @@
-#ifndef SPATIAL
-#define SPATIAL
+#ifndef SPATIAL_H
+#define SPATIAL_H
 
 #include "general.h"
 #include "polygon.h"
