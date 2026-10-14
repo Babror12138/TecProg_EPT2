@@ -88,10 +88,19 @@ static void* resize_increment_array(void* p, int* size, int byte, int increment)
   return temp;
 }
 
+static int is_valid_polygon(Poligono P) {
+  return P.vertices != NULL && P.n >= 3;
+}
+
 Ponto* intersection_polygon(Poligono A, Poligono B, int *length) {
   int n = 10;
   int k = 0; // indice para o vetor dos pontos de interseção
+
+  if (length == NULL) return NULL;
   *length = 0;
+
+  if (!is_valid_polygon(A) || !is_valid_polygon(B)) return 0;
+  
   
   Ponto* intersects = (Ponto*) malloc(n * sizeof(Ponto));
   if (intersects == NULL) return NULL;
@@ -125,7 +134,7 @@ Ponto* intersection_polygon(Poligono A, Poligono B, int *length) {
   }
 
   // garante que o vetor final tenha o tamanho correto
-  intersects = resize_array(intersects, n, sizeof(Ponto));
+  intersects = resize_array(intersects, k, sizeof(Ponto));
   if (intersects == NULL) return NULL;
 
   *length = k;
@@ -214,6 +223,8 @@ static int add_intersection_points(Poligono A, Poligono B, Poligono* xA) {
 
 // verifica se um poligono A está totalmente contido no poligono B
 int is_polygon_inside(Poligono A, Poligono B) {
+  if (!is_valid_polygon(A) || !is_valid_polygon(B)) return 0;
+
   // verifica se todos os pontos de A estão dentro de B
   for (int i = 0; i < A.n; i++) {
     if (!polygon_contains_point(&B, &A.vertices[i])) {
@@ -296,7 +307,11 @@ static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* inte
 }
 
 Poligono* intersection_region(Poligono A, Poligono B, int* length) {
+
+  if (length == NULL) return NULL;
   *length = 0;
+
+  if (!is_valid_polygon(A) || !is_valid_polygon(B)) return NULL;
 
   // se algum poligono está contido no outro, então o poligono de interseção é o contido
   if (is_polygon_inside(A, B)) {
@@ -335,6 +350,15 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
   int regionsCount = 5;
   int regionsIdx = 0;
   Poligono* regions = (Poligono*) malloc(regionsCount * sizeof(Poligono));
+
+  if (used == NULL || regions == NULL) {
+    free(used);
+    free(regions);
+    free(intersects);
+    free_polygon(&xPolygonA);
+    free_polygon(&xPolygonB);
+    return NULL;
+  }
 
   for (int i = 0; i < intersectsCount; i++) {
     if (used[i]) continue;
