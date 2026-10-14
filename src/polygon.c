@@ -145,8 +145,8 @@ int is_convex(const Poligono *poligono) {
 	return 1;
 }
 
-int polygon_contains_point(const Poligono *poligono, Ponto *ponto) {
-	if (poligono == NULL || poligono->vertices == NULL || poligono->n < 3) {
+int polygon_contains_point(const Poligono *poligono, const Ponto *ponto) {
+	if (poligono == NULL || poligono->vertices == NULL || poligono->n < 3 || ponto == NULL) {
 		return 0;
 	}
 

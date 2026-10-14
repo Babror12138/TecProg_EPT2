@@ -42,7 +42,9 @@ Ponto* closest_pair(Ponto* pontos, int n) {
 // encontro o pontode interseção aos dois segmentos dados se existir
 static int find_intersection_point(Segmento segA, Segmento segB, Ponto* intersection_point) {
   if (intersection_point == NULL) return 0;
-  if (lines_position(&segA, &segB) == PARALELOS) return 0;
+
+  int position = lines_position(&segA, &segB);
+  if (position == INVALIDO || position == PARALELOS) return 0;
 
   Ponto point = line_intersection(&segA, &segB);
 
@@ -99,7 +101,7 @@ Ponto* intersection_polygon(Poligono A, Poligono B, int *length) {
   if (length == NULL) return NULL;
   *length = 0;
 
-  if (!is_valid_polygon(A) || !is_valid_polygon(B)) return 0;
+  if (!is_valid_polygon(A) || !is_valid_polygon(B)) return NULL;
   
   
   Ponto* intersects = (Ponto*) malloc(n * sizeof(Ponto));
@@ -340,10 +342,17 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
 
   // adiciona as interseções aos poligonos, preservando a ordem dos pontos
   Poligono xPolygonA;
-  if (!add_intersection_points(A, B, &xPolygonA)) return NULL;
+  if (!add_intersection_points(A, B, &xPolygonA)) {
+    free(intersects);
+    return NULL;
+  }
 
   Poligono xPolygonB;
-  if (!add_intersection_points(B, A, &xPolygonB)) return NULL;
+  if (!add_intersection_points(B, A, &xPolygonB)) {
+    free(intersects);
+    free_polygon(&xPolygonA);
+    return NULL;
+  }
 
   // diz se o i-ésimo ponto de interseção já foi utlizado
   int* used = (int*) calloc(intersectsCount, sizeof(int));

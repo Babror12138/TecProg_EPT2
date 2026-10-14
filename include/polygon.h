@@ -80,6 +80,6 @@ int is_convex(const Poligono *poligono);
  * @pre poligono != NULL.
  * @pre ponto != NULL.
  */
-int polygon_contains_point(const Poligono *poligono, Ponto *ponto);
+int polygon_contains_point(const Poligono *poligono, const Ponto *ponto);
 
 #endif
