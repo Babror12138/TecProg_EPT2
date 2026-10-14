@@ -150,6 +150,18 @@ static void test_intersection_region(void) {
     free_polygon(&b);
     free_polygon(&dentro);
     free_polygon(&longe);
+
+    Ponto ta[] = { {0, 0}, {6, 0}, {3, 6} }, tb[] = { {0, 4}, {6, 4}, {3, -2} };
+    Poligono t1 = create_polygon(3, ta), t2 = create_polygon(3, tb);
+    regioes = intersection_region(t1, t2, &n);
+    ASSERT_TRUE(n == 1);
+    ASSERT_TRUE(regioes != NULL);
+    ASSERT_TRUE(regioes[0].n == 6);
+    ASSERT_NEAR(polygon_area(&regioes[0]), 12.0, EPS);
+    free_polygon(&regioes[0]);
+    free(regioes);
+    free_polygon(&t1);
+    free_polygon(&t2);
 }
 
 int main(void) {
