@@ -248,7 +248,7 @@ static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* inte
   Ponto curr = start;
   int k = startIndex; // indice nos pontos de xA
 
-  while (1) {
+  for (int i = 0; i < xA.n; i++) {
     // adiciona o ponto atual no caminho
     pathPoints[pathIdx++] = curr;
 
