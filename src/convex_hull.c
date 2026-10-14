@@ -46,7 +46,7 @@ Poligono convex_hull_jarvis(int n, const Ponto *pontos) {
         // acha o próximo ponto do fecho
         for (int i = 0; i < n; i++) {
             // se for o próprio ponto atual ignora
-            if (dist2(&pontos[i], &pontos[atual]) < GEOM_EPS) continue;
+            if (dist2(&pontos[i], &pontos[atual]) == 0) continue;
             if (cand < 0) {
                 cand = i;
                 continue;
@@ -54,7 +54,7 @@ Poligono convex_hull_jarvis(int n, const Ponto *pontos) {
 
             // faz o produto vetorial entre atual, cand e i, se achar um ponto melhor, troca cand por ele
             double c = cross(&pontos[atual], &pontos[cand], &pontos[i]);
-            if (c < 0 || (c < GEOM_EPS && dist2(&pontos[atual], &pontos[i]) > dist2(&pontos[atual], &pontos[cand]))) cand = i;
+            if (c < 0 || (c == 0 && dist2(&pontos[atual], &pontos[i]) > dist2(&pontos[atual], &pontos[cand]))) cand = i;
         }
 
         // condição de parada, cand < 0
@@ -117,7 +117,7 @@ Poligono convex_hull_graham(int n, const Ponto *pontos) {
         while (k >= 2 && cross(&pilha[k - 2], &pilha[k - 1], &v[i]) <= 0) k--;
 
         // elimina pontos repetidos
-        if (k == 1 && dist2(&pilha[0], &v[i]) < GEOM_EPS) continue;
+        if (k == 1 && dist2(&pilha[0], &v[i]) == 0) continue;
 
         // acrescenta v[i] à pilha
         pilha[k++] = v[i];

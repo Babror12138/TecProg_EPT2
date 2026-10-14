@@ -1,9 +1,6 @@
 #ifndef GENERAL_H
 #define GENERAL_H
 
-#include <math.h>
-#include <stdlib.h>
-
 // erro de tolerância para pontos flutuantes
 #define GEOM_EPS 1e-6
 

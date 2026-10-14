@@ -1,5 +1,7 @@
 #include "general.h"
 #include "geometry2d.h"
+#include <math.h>
+#include <stdlib.h>
 
 static int is_degenerate(const Segmento *SR) {
 	return fabs(SR->p1.x - SR->p2.x) < GEOM_EPS && fabs(SR->p1.y - SR->p2.y) < GEOM_EPS;

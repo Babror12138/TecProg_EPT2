@@ -27,14 +27,14 @@ static int contemPonto(const Ponto *pontos, int n, double x, double y) {
 static void test_closest_pair(void) {
     // testa conjunto com um único par mais próximo
     Ponto pontos[] = { {0, 0}, {5, 5}, {1, 0}, {9, 9} };
-    Ponto *par = closest_pair(pontos, TAM(pontos));
+    Ponto *par = closest_pair(TAM(pontos), pontos);
     ASSERT_TRUE(par != NULL);
     ASSERT_TRUE(contemPonto(par, 2, 0, 0));
     ASSERT_TRUE(contemPonto(par, 2, 1, 0));
     free(par);
 
     // testa conjunto com só dois pontos
-    par = closest_pair(pontos, 2);
+    par = closest_pair(2, pontos);
     ASSERT_TRUE(par != NULL);
     ASSERT_TRUE(contemPonto(par, 2, 0, 0));
     ASSERT_TRUE(contemPonto(par, 2, 5, 5));
@@ -42,15 +42,15 @@ static void test_closest_pair(void) {
 
     // testa pontos repetidos (distância zero)
     Ponto repetidos[] = { {3, 3}, {7, 1}, {3, 3} };
-    par = closest_pair(repetidos, TAM(repetidos));
+    par = closest_pair(TAM(repetidos), repetidos);
     ASSERT_TRUE(par != NULL);
     ASSERT_NEAR(par[0].x, par[1].x, GEOM_EPS);
     ASSERT_NEAR(par[0].y, par[1].y, GEOM_EPS);
     free(par);
 
     // testa entradas inválidas
-    ASSERT_TRUE(closest_pair(pontos, 1) == NULL);
-    ASSERT_TRUE(closest_pair(NULL, 4) == NULL);
+    ASSERT_TRUE(closest_pair(1, pontos) == NULL);
+    ASSERT_TRUE(closest_pair(4, NULL) == NULL);
 }
 
 static void test_intersection_polygon(void) {
