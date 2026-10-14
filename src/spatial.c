@@ -221,7 +221,6 @@ int is_polygon_inside(Poligono A, Poligono B) {
 static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* intersects, int intersectsCount, int* end, int* pathSize) {
   int pathCount = 20;
   int pathIdx = 0;
-  Ponto* pathPoints = (Ponto*) malloc(pathCount * sizeof(Ponto));
 
   // procura o indice de start
   int startIndex = 0;
@@ -242,6 +241,9 @@ static Ponto* find_points_path(Ponto start, Poligono xA, Poligono B, Ponto* inte
   }
 
   if (dir == 0) return NULL;
+
+  Ponto* pathPoints = (Ponto*) malloc(pathCount * sizeof(Ponto));
+  if (pathPoints == NULL) return NULL;
 
   Ponto curr = start;
   int k = startIndex; // indice nos pontos de xA
@@ -325,21 +327,32 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
   for (int i = 0; i < intersectsCount; i++) {
     if (used[i]) continue;
 
-    int indexEnd;
+    used[i] = 1;
+
+    int indexEnd = -1;
     int pathCount1 = 0;
     Ponto* pathPoints1 = find_points_path(intersects[i], xPolygonA, B, intersects, intersectsCount, &indexEnd, &pathCount1);
+
+    if (pathPoints1 == NULL) continue;
+
+    used[indexEnd] = 1;
 
     int _;
     int pathCount2 = 0;
     Ponto* pathPoints2 = find_points_path(intersects[indexEnd], xPolygonB, A, intersects, intersectsCount, &_, &pathCount2);
 
-    // marca que utilizamos estes pontos de interseção
-    used[i] = 1;
-    used[indexEnd] = 1;
+    if (pathPoints2 == NULL) {
+      free(pathPoints1);
+      continue;
+    }
+
 
     Ponto regPoints[pathCount1 + pathCount2];
     for (int j = 0; j < pathCount1; j++) regPoints[j] = pathPoints1[j];
     for (int j = 0; j < pathCount2; j++) regPoints[pathCount1 + j] = pathPoints2[j];
+
+    free(pathPoints1);
+    free(pathPoints2);
 
     Poligono region = create_polygon(pathCount1 + pathCount2, regPoints);
     regions[regionsIdx++] = region;
@@ -347,6 +360,11 @@ Poligono* intersection_region(Poligono A, Poligono B, int* length) {
       regions = resize_increment_array(regions, &regionsCount, sizeof(Poligono), 10);
       if (regions == NULL) return NULL;
     }
+  }
+
+  if (regionsIdx == 0) {
+    free(regions);
+    return NULL;
   }
 
   regions = resize_array(regions, regionsIdx, sizeof(Poligono));
