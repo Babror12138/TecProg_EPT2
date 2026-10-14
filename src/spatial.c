@@ -163,7 +163,7 @@ static int add_intersection_points(Poligono A, Poligono B, Poligono* xA) {
       int is_intersection = find_intersection_point(segA, segB, &intersectionPoint);
       if (!is_intersection) continue;
 
-      if (!contains_point(intersectionPoint, intersects, k)) continue;
+      if (!contains_point(intersectionPoint, intersects, l)) continue;
 
       intersects[l++] = intersectionPoint;
 
