@@ -123,16 +123,16 @@ test: $(TEST_BINS)
 
 # Instala (copia) as libs para um diretório com as permissões e proprietários corretos 
 install: $(STATIC_LIB) $(SHARED_LIB)
-	install -d $(LIBDIR) $(INCLUDEDIR)
-	install -m 644 $(STATIC_LIB) $(LIBDIR)
-	install -m 755 $(SHARED_LIB) $(LIBDIR)
-	install -m 644 $(HEADERS) $(INCLUDEDIR)
+	install -d "$(LIBDIR)" "$(INCLUDEDIR)"
+	install -m 644 $(STATIC_LIB) "$(LIBDIR)"
+	install -m 755 $(SHARED_LIB) "$(LIBDIR)"
+	install -m 644 $(HEADERS) "$(INCLUDEDIR)"
 	@echo "Instalado em $(PREFIX)"
 
 # Desinstala (deleta) as libs do diretório em questão
 uninstall:
-	rm -f $(LIBDIR)/$(notdir $(STATIC_LIB)) $(LIBDIR)/$(notdir $(SHARED_LIB))
-	rm -rf $(INCLUDEDIR)
+	rm -f "$(LIBDIR)/$(notdir $(STATIC_LIB))" "$(LIBDIR)/$(notdir $(SHARED_LIB))"
+	rm -rf "$(INCLUDEDIR)"
 
 # Limpeza dos artefatos criados
 clean:
