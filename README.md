@@ -6,6 +6,8 @@ O projeto inclui uma aplicação cliente de demonstração, que usa a biblioteca
 
 Trabalho Prático 2 de MAC0216 – Técnicas de Programação I (IME-USP).
 
+Vídeo de demonstração: <https://youtu.be/EKXlEyO7xbY>
+
 ## Funcionalidades
 
 - **Tipos geométricos básicos**: ponto (`Ponto`) e segmento (`Segmento`), com funções para criá-los.
